@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="PREVITA">
 <title>PREVITA – Prevenção + Vida</title>
-<link rel="manifest" href="data:application/json,{%22name%22:%22PREVITA%22,%22short_name%22:%22PREVITA%22,%22start_url%22:%22/previta/%22,%22display%22:%22standalone%22,%22background_color%22:%22%231a7a4a%22,%22theme_color%22:%22%231a7a4a%22}">
-<link rel="apple-touch-icon" href="https://fosterfcs.github.io/previta/icon.png">
+<link rel="apple-touch-icon" sizes="512x512" href="https://fosterfcs.github.io/previta/icon.png">
+<link rel="icon" type="image/png" href="https://fosterfcs.github.io/previta/icon.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 :root {
@@ -1147,8 +1147,7 @@ function processarReceitaTexto() {
   const texto = document.getElementById('receitaTextoInput').value.trim();
   if(!texto) { alert('Digite ou cole os remédios primeiro!'); return; }
   
-  const linhas = texto.split('
-').map(l => l.trim()).filter(l => l.length > 2);
+  const linhas = texto.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 2);
   if(!linhas.length) { alert('Nenhum remédio encontrado!'); return; }
   
   // Processar cada linha como um remédio
@@ -1220,16 +1219,14 @@ function limparReceita() {
   document.getElementById('receitaFotoInput').value = '';
 }
 
-// ===== CONTADOR DE ACESSO =====
-async function registrarAcesso() {
+// ===== CONTADOR DE ACESSO LOCAL =====
+function registrarAcesso() {
   try {
-    const resp = await fetch('https://api.countapi.xyz/hit/fosterfcs.github.io/previta');
-    if(resp.ok) {
-      const data = await resp.json();
-      const el = document.getElementById('contadorAcessos');
-      if(el && data.value) el.textContent = data.value.toLocaleString('pt-BR') + ' acessos';
-    }
-  } catch(e) { /* silencioso */ }
+    let total = parseInt(localStorage.getItem('pv_acessos_total')||'0') + 1;
+    localStorage.setItem('pv_acessos_total', total);
+    const el = document.getElementById('contadorAcessos');
+    if(el) el.textContent = total.toLocaleString('pt-BR') + ' acessos neste dispositivo';
+  } catch(e) {}
 }
 
 // ===== INIT =====
