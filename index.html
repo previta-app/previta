@@ -180,6 +180,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .vazio{text-align:center;padding:28px;color:var(--cinza-texto);font-size:14px;font-weight:600;}
 .rodape{text-align:center;font-size:10px;color:#9ca3af;padding:12px;line-height:1.8;font-weight:600;background:white;border-radius:14px;margin-top:8px;box-shadow:var(--sombra);}
 .rodape strong{color:var(--verde);}
+.app-topbar{background:linear-gradient(135deg,#0d4f2e,#1a7a4a);color:white;text-align:center;padding:9px 16px;font-size:13px;font-weight:800;letter-spacing:0.3px;display:flex;align-items:center;justify-content:center;gap:8px;}
 .offline-badge{background:#e8f5ee;color:#145c38;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-align:center;margin-bottom:10px;}
 .online-badge{background:#e0f2fe;color:#0369a1;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-align:center;margin-bottom:10px;}
 </style>
@@ -231,14 +232,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
     <div class="card-titulo">💊 Meus Remédios</div>
     <div id="listaRemedios"><p class="vazio">Nenhum remédio cadastrado.<br>Adicione abaixo! 👇</p></div>
   </div>
-  <button class="btn-verde" onclick="abrirModal()">➕ Adicionar Remédio</button>
-  <div style="margin-top:10px;background:#fee2e2;border:2px solid #ef4444;border-radius:14px;padding:14px;display:flex;align-items:center;gap:14px;">
+  <div style="background:#fee2e2;border:2px solid #ef4444;border-radius:14px;padding:14px;display:flex;align-items:center;gap:14px;margin-bottom:12px;">
     <div style="font-size:36px;">🚨</div>
     <div style="flex:1;">
       <div style="font-size:15px;font-weight:900;color:#b91c1c;">Emergência?</div>
       <div style="font-size:13px;color:#7f1d1d;font-weight:600;margin-top:2px;">Ligue agora para o SAMU</div>
     </div>
     <a href="tel:192" style="background:#ef4444;color:white;border-radius:12px;padding:12px 16px;font-size:18px;font-weight:900;text-decoration:none;display:flex;align-items:center;gap:6px;">📞 192</a>
+  </div>
+  <div style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px;text-align:center;font-size:14px;font-weight:700;color:var(--verde);">
+    💡 Para cadastrar remédios, acesse a aba <strong>Usuário</strong> e configure seu perfil.
   </div>
   <div class="rodape" style="margin-top:12px;"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
 </div>
@@ -377,7 +380,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 <div class="tela" id="tela-ia">
   <div class="card" style="margin-top:14px;">
     <div class="card-titulo">🤖 PREV – Assistente de Saúde</div>
-    <p style="font-size:14px;color:var(--cinza-texto);margin-bottom:12px;font-weight:600;">💬 Digite o nome do remédio ou sua dúvida de saúde. Respondo na hora!</p>
+    <div style="background:#e8f5ee;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:13px;font-weight:600;color:#145c38;">
+      📴 <strong>Offline:</strong> Respondo na hora, sem internet.<br>
+      🌐 <strong>Online:</strong> Pesquisa atualizada (requer configuração do servidor).
+    </div>
     <div class="ia-chat" id="iaChat">
       <div class="msg ia"><div class="msg-bubble">Olá! 👋 Sou o PREV, assistente do PREVITA.<br><br>Posso responder <strong>offline</strong> sobre remédios comuns, ou <strong>pesquisar online</strong> para informações atualizadas! 😊</div></div>
     </div>
@@ -386,6 +392,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       <button class="btn-enviar" onclick="enviarIA()">➤</button>
     </div>
     <button id="btnPesquisarOnline" onclick="pesquisarOnline()" style="display:none;width:100%;margin-top:8px;padding:14px;background:#e0f2fe;color:#0369a1;border:2px solid #0369a1;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">🌐 Pesquisar mais informações online</button>
+    <div id="msgOnlineStatus" style="display:none;text-align:center;font-size:12px;color:var(--cinza-texto);margin-top:6px;font-weight:600;"></div>
   </div>
   <div class="card">
     <div class="card-titulo">💡 Perguntas rápidas</div>
@@ -427,7 +434,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       <div class="card-titulo" style="margin-top:4px;padding-bottom:8px;">📋 Menu do Agente</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
         <button onclick="irPara('remedios',null)" style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
-          <div style="font-size:28px;">💊</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:4px;">Meus Remédios</div>
+          <div style="font-size:28px;">💊</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:4px;">Remédios</div>
         </button>
         <button onclick="irPara('pacientes',null)" style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
           <div style="font-size:28px;">👥</div><div style="font-size:12px;font-weight:800;color:#3b82f6;margin-top:4px;">Pacientes</div>
@@ -444,7 +451,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       <div class="card-titulo" style="margin-top:4px;padding-bottom:8px;">📋 Meu Menu</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
         <button onclick="irPara('remedios',null)" style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
-          <div style="font-size:28px;">💊</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:4px;">Meus Remédios</div>
+          <div style="font-size:28px;">💊</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:4px;">Remédios</div>
         </button>
         <button onclick="irPara('membros',null)" style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
           <div style="font-size:28px;">👨‍👩‍👧</div><div style="font-size:12px;font-weight:800;color:#3b82f6;margin-top:4px;">Minha Família</div>
@@ -651,6 +658,30 @@ const GUIA = [
   {id:'tireoide',icon:'🦋',cor:'#0891b2',bg:'#e0f7fa',titulo:'Tireoide',subtitulo:'Hipo e hipertireoidismo',topicos:[
     {icon:'🐢',titulo:'Hipotireoidismo (lenta)',texto:'Sinais: cansaço, ganho de peso, frio constante, pele seca. Tratado com Levotiroxina em jejum.',dica:'Tome a Levotiroxina 30-60 min antes do café. Nunca com leite ou café.'},
     {icon:'⚡',titulo:'Hipertireoidismo (rápida)',texto:'Sinais: emagrecimento, coração acelerado, agitação, calor excessivo.',alerta:'Hipertireoidismo não tratado pode causar problemas cardíacos sérios.'}
+  ]},
+  {id:'crianca',icon:'👶',cor:'#7c3aed',bg:'#ede9fe',titulo:'Saúde da Criança',subtitulo:'Crescimento, vacinas e desenvolvimento',topicos:[
+    {icon:'💉',titulo:'Vacinas em Dia',texto:'O calendário vacinal protege contra doenças graves. Leve sempre a carteirinha às consultas. Vacinas gratuitas na UBS.',dica:'Crianças com vacinas atrasadas podem tomar na UBS a qualquer momento.'},
+    {icon:'📏',titulo:'Crescimento Saudável',texto:'Acompanhe peso e altura nas consultas. Curvas de crescimento mostram se a criança está se desenvolvendo bem.',alerta:'Criança que para de crescer ou perde peso precisa de avaliação médica.'},
+    {icon:'🍎',titulo:'Alimentação até 2 anos',texto:'Até 6 meses: só leite materno. Após 6 meses: introdução de alimentos naturais. Evite açúcar, sal e industrializados antes dos 2 anos.',dica:'Amamentação exclusiva até 6 meses protege contra infecções e alergias.'},
+    {icon:'🦟',titulo:'Dengue e Febres',texto:'Elimine água parada. Use repelente. Febre alta com manchas vermelhas: procure atendimento rapidamente.',alerta:'Sinais de dengue grave: dor abdominal intensa, vômitos, sangramentos. Vá à UPA.'}
+  ]},
+  {id:'gestante',icon:'🤰',cor:'#be185d',bg:'#fce7f3',titulo:'Saúde da Gestante',subtitulo:'Cuidados durante a gravidez',topicos:[
+    {icon:'📋',titulo:'Pré-natal',texto:'Faça todas as consultas de pré-natal. O SUS oferece pré-natal gratuito na UBS.',dica:'Comece o pré-natal antes das 12 semanas de gestação.'},
+    {icon:'💊',titulo:'Ácido Fólico e Ferro',texto:'Ácido fólico: iniciar antes da gravidez e nos primeiros 3 meses. Ferro: evita anemia.',alerta:'Nunca tome remédios na gravidez sem orientação médica.'},
+    {icon:'🚨',titulo:'Sinais de Alerta',texto:'Sangramento, dor de cabeça forte, visão turva, inchaço súbito: procure atendimento imediatamente.',alerta:'Pré-eclâmpsia (pressão alta na gravidez) pode ser grave. Não ignore.'},
+    {icon:'🥗',titulo:'Alimentação',texto:'Evite alimentos crus ou mal cozidos. Evite álcool e cigarro. Coma frutas, verduras e proteínas variadas.',dica:'Ganho saudável na gravidez: entre 11 e 16 kg para peso normal.'}
+  ]},
+  {id:'familia',icon:'👨‍👩‍👧‍👦',cor:'#059669',bg:'#d1fae5',titulo:'Saúde da Família',subtitulo:'Cuidados para toda a família',topicos:[
+    {icon:'🏠',titulo:'Ambiente Saudável',texto:'Mantenha a casa limpa, arejada e sem umidade. Descarte lixo corretamente. Evite acúmulo de água parada.',dica:'Uma casa limpa previne dengue, leptospirose e doenças respiratórias.'},
+    {icon:'🤝',titulo:'Cuidado com o Cuidador',texto:'Quem cuida de alguém doente também precisa de apoio. Descanse, peça ajuda e cuide da sua saúde mental.',dica:'Converse com a equipe da UBS se sentir cansaço excessivo ou tristeza.'},
+    {icon:'👴',titulo:'Idosos em Casa',texto:'Adapte a casa para evitar quedas. Organize os remédios por dia e horário. Mantenha consultas em dia.',alerta:'Idoso confuso, sonolento ou sem comer: leve ao médico — pode ser sinal grave.'},
+    {icon:'💊',titulo:'Organize os Remédios',texto:'Use caixinha semanal de remédios. Anote os horários. Verifique a validade regularmente. Use o PREVITA para os alertas!',dica:'Foto da receita na tela Receita ajuda a não esquecer os remédios prescritos.'},
+    {icon:'🧼',titulo:'Higiene e Prevenção',texto:'Lave as mãos antes de comer e após usar o banheiro. Escove os dentes 3x ao dia. Beba água filtrada ou fervida.',dica:'Higiene das mãos é a medida mais simples e eficaz de prevenir doenças.'}
+  ]},
+  {id:'saude-bucal',icon:'🦷',cor:'#0284c7',bg:'#e0f2fe',titulo:'Saúde Bucal',subtitulo:'Cuidados com dentes e boca',topicos:[
+    {icon:'🪥',titulo:'Escovação Correta',texto:'Escove os dentes pelo menos 3 vezes ao dia, especialmente após as refeições e antes de dormir. Use fio dental diariamente.',dica:'Troque a escova a cada 3 meses ou após doenças como gripe.'},
+    {icon:'👶',titulo:'Saúde Bucal Infantil',texto:'Limpe as gengivas do bebê com gaze úmida desde o nascimento. Ao surgir os primeiros dentes, use escova infantil sem pasta.',alerta:'Mamadeira com leite ou suco antes de dormir causa cárie precoce.'},
+    {icon:'🏥',titulo:'Dentista na UBS',texto:'A UBS oferece atendimento odontológico gratuito. Marque consulta preventiva a cada 6 meses.',dica:'Problemas bucais não tratados podem afetar o coração e a pressão arterial.'}
   ]}
 ];
 
