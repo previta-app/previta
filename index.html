@@ -441,9 +441,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
         <button onclick="irPara('pacientes',null)" style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
           <div style="font-size:28px;">👥</div><div style="font-size:12px;font-weight:800;color:#3b82f6;margin-top:4px;">Pacientes</div>
         </button>
-        <button onclick="irPara('membros',null)" style="background:var(--laranja-claro);border:2px solid var(--laranja);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
-          <div style="font-size:28px;">🏥</div><div style="font-size:12px;font-weight:800;color:var(--laranja);margin-top:4px;">Equipe UBS</div>
-        </button>
         <button onclick="irPara('agenda',document.querySelectorAll('.tab-btn')[1])" style="background:#ede9fe;border:2px solid #7c3aed;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
           <div style="font-size:28px;">📅</div><div style="font-size:12px;font-weight:800;color:#7c3aed;margin-top:4px;">Consultas</div>
         </button>
@@ -452,11 +449,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
     <div id="submenuPaciente" style="display:none;">
       <div class="card-titulo" style="margin-top:4px;padding-bottom:8px;">📋 Meu Menu</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-        <button onclick="irPara('remedios',null)" style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
-          <div style="font-size:28px;">💊</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:4px;">Remédios</div>
+        <button onclick="irPara('pacientes',null)" style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">👤</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:4px;">Meu Cadastro</div>
         </button>
         <button onclick="irPara('membros',null)" style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
-          <div style="font-size:28px;">👨‍👩‍👧</div><div style="font-size:12px;font-weight:800;color:#3b82f6;margin-top:4px;">Minha Família</div>
+          <div style="font-size:28px;">👨‍👩‍👧</div><div style="font-size:12px;font-weight:800;color:#3b82f6;margin-top:4px;">Família</div>
+        </button>
+        <button onclick="irPara('remedios',null)" style="background:#ede9fe;border:2px solid #7c3aed;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">💊</div><div style="font-size:12px;font-weight:800;color:#7c3aed;margin-top:4px;">Remédios</div>
         </button>
         <button onclick="irPara('agenda',document.querySelectorAll('.tab-btn')[1])" style="background:var(--laranja-claro);border:2px solid var(--laranja);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
           <div style="font-size:28px;">📅</div><div style="font-size:12px;font-weight:800;color:var(--laranja);margin-top:4px;">Consultas</div>
