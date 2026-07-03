@@ -187,6 +187,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 </head>
 <body>
 
+<div class="app-topbar">💊 PREVITA — Controle de Remédios e Consultas</div>
+
 <header class="header header-manha" id="mainHeader">
   <div class="header-top">
     <div class="logo-area">
@@ -310,7 +312,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       <div style="font-size:28px;">🏥</div>
       <div>
         <div style="font-size:14px;font-weight:900;">Importar Receita Médica</div>
-        <div style="font-size:10px;opacity:0.8;font-weight:600;">UBS São Pedro – Santana de Parnaíba – SP</div>
+
       </div>
     </div>
     <div style="font-size:11px;opacity:0.85;font-weight:600;">Fotografe sua receita — o app lê e cadastra os remédios automaticamente!</div>
@@ -1012,10 +1014,16 @@ const BASE = [
   {t:['ferro','sulfato ferroso','anemia'],r:'O **Sulfato Ferroso** trata anemia.\n\n✅ Tome EM JEJUM com suco de laranja\n⚠️ Não tome com leite ou Levotiroxina'}
 ];
 
+function remAcentos(s) {
+  return s.toLowerCase()
+    .replace(/[áàãâä]/g,'a').replace(/[éèêë]/g,'e').replace(/[íìîï]/g,'i')
+    .replace(/[óòõôö]/g,'o').replace(/[úùûü]/g,'u').replace(/[ç]/g,'c')
+    .replace(/[ñ]/g,'n');
+}
 function buscarResposta(msg) {
-  const ml = msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  for (const item of BASE) {
-    if (item.t.some(t => ml.includes(t.normalize('NFD').replace(/[\u0300-\u036f]/g, '')))) return item.r;
+  const ml = remAcentos(msg);
+  for (let i = 0; i < BASE.length; i++) {
+    if (BASE[i].t.some(function(t) { return ml.indexOf(remAcentos(t)) !== -1; })) return BASE[i].r;
   }
   return null;
 }
