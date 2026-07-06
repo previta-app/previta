@@ -1291,10 +1291,24 @@ function mostrarToast(msg) {
 }
 function registrarAcesso() {
   try {
-    let total = parseInt(localStorage.getItem('pv_acessos_total') || '0') + 1;
-    localStorage.setItem('pv_acessos_total', total);
-    const el = document.getElementById('contadorAcessos');
-    if (el) el.textContent = total.toLocaleString('pt-BR') + ' acessos neste dispositivo';
+    let local = parseInt(localStorage.getItem('pv_acessos_total') || '0') + 1;
+    localStorage.setItem('pv_acessos_total', local);
+    fetch(WORKER_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ modo: 'contador', pergunta: '' })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      const el = document.getElementById('contadorAcessos');
+      if (el && data.total) {
+        el.textContent = '📊 ' + parseInt(data.total).toLocaleString('pt-BR') + ' acesso' + (parseInt(data.total) !== 1 ? 's' : '') + ' pela comunidade';
+      }
+    })
+    .catch(function() {
+      const el = document.getElementById('contadorAcessos');
+      if (el) el.textContent = '📊 ' + local.toLocaleString('pt-BR') + ' acesso' + (local !== 1 ? 's' : '') + ' neste dispositivo';
+    });
   } catch(e) {}
 }
 document.addEventListener('touchstart', function() { getAudioCtx(); }, {once:true});
