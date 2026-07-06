@@ -298,7 +298,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       <h3 style="font-size:15px;font-weight:900;color:var(--verde);">UBS São Pedro</h3>
       <p style="font-size:12px;color:var(--cinza-texto);font-weight:600;margin-top:3px;">Santana de Parnaíba – SP</p>
     </div>
-    <div class="card-titulo" style="padding:0 0 8px;">👥 Equipe de Saúde</div>
     <div id="listaMembros"></div>
     <button class="btn-verde" onclick="abrirModalMembro()" style="margin-top:4px;">➕ Adicionar Membro</button>
   </div>
@@ -1084,32 +1083,61 @@ async function previewReceitaFoto(input) {
     imgEl.src = e.target.result; imgEl.style.display = 'block';
     const status = document.getElementById('receitaFotoStatus');
     status.style.display = 'block'; status.style.background = '#e0f2fe'; status.style.color = '#0369a1';
-    status.textContent = '🔍 Lendo a receita... aguarde até 30 segundos.';
+    status.textContent = '🔍 Lendo a receita... aguarde.';
     const progWrap = document.getElementById('ocrProgressWrap');
     const progBar = document.getElementById('ocrProgressBar');
     progWrap.style.display = 'block'; progBar.style.width = '0%';
     try {
+      // PASSO 1: OCR lê o texto da imagem
       const resultado = await Tesseract.recognize(e.target.result, 'por', {
         logger: function(info) {
           if (info.status === 'recognizing text') {
             const pct = Math.round(info.progress * 100);
             progBar.style.width = pct + '%';
-            status.textContent = '🔍 Lendo... ' + pct + '%';
+            status.textContent = '🔍 Lendo imagem... ' + pct + '%';
           }
         }
       });
       progWrap.style.display = 'none';
       const textoLido = resultado.data.text.trim();
-      if (textoLido && textoLido.length > 3) {
-        document.getElementById('receitaTextoInput').value = textoLido;
-        status.style.background = '#e8f5ee'; status.style.color = '#1a7a4a';
-        status.textContent = '✅ Texto lido! Confira e ajuste antes de adicionar.';
-      } else {
+      if (!textoLido || textoLido.length < 3) {
         status.style.background = '#fff3e8'; status.style.color = '#c2410c';
         status.textContent = '⚠️ Não consegui ler o texto. Tente foto mais nítida ou digite manualmente.';
+        return;
+      }
+      // PASSO 2: Groq filtra só os medicamentos
+      status.style.background = '#e0f2fe'; status.style.color = '#0369a1';
+      status.textContent = '🤖 Identificando medicamentos...';
+      try {
+        const resp = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            pergunta: 'Da lista de texto abaixo, extraia APENAS os nomes de medicamentos/remédios com suas dosagens. Responda SOMENTE com um medicamento por linha, sem explicações, sem numeração, sem texto extra. Se não houver medicamentos, responda: NENHUM. Texto: ' + textoLido,
+            modo: 'receita'
+          })
+        });
+        const data = await resp.json();
+        const medicamentosTexto = (data.resposta || '').trim();
+        if (!medicamentosTexto || medicamentosTexto === 'NENHUM' || medicamentosTexto.toUpperCase().includes('NENHUM')) {
+          // Fallback: usar o texto original do OCR
+          document.getElementById('receitaTextoInput').value = textoLido;
+          status.style.background = '#fff3e8'; status.style.color = '#c2410c';
+          status.textContent = '⚠️ Não identifiquei medicamentos automaticamente. Confira o texto abaixo e remova o que não for remédio.';
+        } else {
+          document.getElementById('receitaTextoInput').value = medicamentosTexto;
+          status.style.background = '#e8f5ee'; status.style.color = '#1a7a4a';
+          status.textContent = '✅ Medicamentos identificados! Confira abaixo e clique em Adicionar.';
+        }
+      } catch(errGroq) {
+        // Se Groq falhar, usa o texto bruto do OCR
+        document.getElementById('receitaTextoInput').value = textoLido;
+        status.style.background = '#fff3e8'; status.style.color = '#c2410c';
+        status.textContent = '⚠️ Texto lido! Confira e remova o que não for remédio antes de adicionar.';
       }
     } catch(err) {
-      progWrap.style.display = 'none'; status.style.background = '#fff3e8'; status.style.color = '#c2410c';
+      progWrap.style.display = 'none';
+      status.style.background = '#fff3e8'; status.style.color = '#c2410c';
       status.textContent = '⚠️ Erro ao processar. Digite os remédios manualmente.';
     }
   };
