@@ -180,14 +180,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .vazio{text-align:center;padding:28px;color:var(--cinza-texto);font-size:14px;font-weight:600;}
 .rodape{text-align:center;font-size:10px;color:#9ca3af;padding:12px;line-height:1.8;font-weight:600;background:white;border-radius:14px;margin-top:8px;box-shadow:var(--sombra);}
 .rodape strong{color:var(--verde);}
-.app-topbar{background:linear-gradient(135deg,#0d4f2e,#1a7a4a);color:white;text-align:center;padding:9px 16px;font-size:13px;font-weight:800;letter-spacing:0.3px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.app-topbar{background:linear-gradient(135deg,#0d4f2e,#1a7a4a);color:white;text-align:center;padding:10px 16px;font-size:15px;font-weight:900;letter-spacing:1px;display:flex;align-items:center;justify-content:center;}
 .offline-badge{background:#e8f5ee;color:#145c38;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-align:center;margin-bottom:10px;}
 .online-badge{background:#e0f2fe;color:#0369a1;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-align:center;margin-bottom:10px;}
 </style>
 </head>
 <body>
 
-<div class="app-topbar">💊 PREVITA — Controle de Remédios e Consultas</div>
+<div class="app-topbar">PREVITA — Controle de Remédios e Consultas</div>
 
 <header class="header header-manha" id="mainHeader">
   <div class="header-top">
@@ -222,9 +222,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
     <h3>💊 Cuide-se com PREVITA</h3>
     <p>Controle seus remédios, acompanhe consultas e cuide da sua saúde.</p>
     <small>⚠️ Não substitui prescrição ou orientação médica.</small>
-    <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.2);font-size:10px;opacity:0.85;">
-      <span id="contadorAcessos">📊 Carregando...</span>
-    </div>
+
   </div>
   <div class="stats-row">
     <div class="stat-box"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Remédios</div></div>
@@ -1101,9 +1099,11 @@ async function previewReceitaFoto(input) {
       });
       progWrap.style.display = 'none';
       const textoLido = resultado.data.text.trim();
-      if (!textoLido || textoLido.length < 3) {
+      // Verificar se o texto lido parece válido (tem palavras reais em português)
+      const palavrasValidas = textoLido.split(/\s+/).filter(p => p.length > 3).length;
+      if (!textoLido || textoLido.length < 10 || palavrasValidas < 3) {
         status.style.background = '#fff3e8'; status.style.color = '#c2410c';
-        status.textContent = '⚠️ Não consegui ler o texto. Tente foto mais nítida ou digite manualmente.';
+        status.innerHTML = '⚠️ <strong>Não consegui ler esta receita.</strong><br><small>Receitas manuscritas são difíceis de ler automaticamente.<br>Digite os remédios manualmente no campo abaixo.</small>';
         return;
       }
       // PASSO 2: Groq filtra ANTES de mostrar no campo
@@ -1121,10 +1121,10 @@ async function previewReceitaFoto(input) {
         const data = await resp.json();
         const medicamentosTexto = (data.resposta || '').trim();
         if (!medicamentosTexto || medicamentosTexto.toUpperCase().includes('NENHUM')) {
-          // Groq não encontrou remédios — mostra texto bruto para o usuário editar
-          document.getElementById('receitaTextoInput').value = textoLido;
+          // Groq não encontrou remédios — orienta digitar manualmente
+          document.getElementById('receitaTextoInput').value = '';
           status.style.background = '#fff3e8'; status.style.color = '#c2410c';
-          status.textContent = '⚠️ Não identifiquei remédios automaticamente. Apague o que não for remédio e clique em Adicionar.';
+          status.innerHTML = '⚠️ <strong>Não identifiquei remédios na foto.</strong><br><small>Receitas manuscritas têm baixa precisão.<br>Digite os remédios manualmente no campo abaixo.</small>';
         } else {
           // ✅ Groq filtrou — mostra APENAS os remédios no campo
           document.getElementById('receitaTextoInput').value = medicamentosTexto;
@@ -1302,10 +1302,7 @@ function registrarAcesso() {
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      const el = document.getElementById('contadorAcessos');
-      if (el && data.total) {
-        el.textContent = '📊 ' + parseInt(data.total).toLocaleString('pt-BR') + ' acesso' + (parseInt(data.total) !== 1 ? 's' : '') + ' pela comunidade';
-      }
+
       // Atualizar contador no header
       const hdr = document.getElementById('contadorHeader');
       if (hdr && data.total) {
@@ -1313,8 +1310,7 @@ function registrarAcesso() {
       }
     })
     .catch(function() {
-      const el = document.getElementById('contadorAcessos');
-      if (el) el.textContent = '📊 ' + local.toLocaleString('pt-BR') + ' acesso' + (local !== 1 ? 's' : '') + ' neste dispositivo';
+
       const hdr = document.getElementById('contadorHeader');
       if (hdr) hdr.textContent = '👥 ' + local.toLocaleString('pt-BR');
     });
