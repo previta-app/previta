@@ -205,6 +205,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
     <div class="header-right">
       <div class="periodo-badge" id="periodoBadge">🌅 Bom dia!</div>
       <div class="header-data" id="headerData"></div>
+      <div id="contadorHeader" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:8px;padding:3px 8px;font-size:10px;font-weight:800;color:white;margin-top:4px;display:inline-block;">👥 ...</div>
     </div>
   </div>
   <div class="alerta-hoje">
@@ -1105,9 +1106,9 @@ async function previewReceitaFoto(input) {
         status.textContent = '⚠️ Não consegui ler o texto. Tente foto mais nítida ou digite manualmente.';
         return;
       }
-      // PASSO 2: Groq filtra só os medicamentos
+      // PASSO 2: Groq filtra ANTES de mostrar no campo
       status.style.background = '#e0f2fe'; status.style.color = '#0369a1';
-      status.textContent = '🤖 Identificando medicamentos...';
+      status.textContent = '🤖 Identificando medicamentos na receita...';
       try {
         const resp = await fetch(WORKER_URL, {
           method: 'POST',
@@ -1119,21 +1120,22 @@ async function previewReceitaFoto(input) {
         });
         const data = await resp.json();
         const medicamentosTexto = (data.resposta || '').trim();
-        if (!medicamentosTexto || medicamentosTexto === 'NENHUM' || medicamentosTexto.toUpperCase().includes('NENHUM')) {
-          // Fallback: usar o texto original do OCR
+        if (!medicamentosTexto || medicamentosTexto.toUpperCase().includes('NENHUM')) {
+          // Groq não encontrou remédios — mostra texto bruto para o usuário editar
           document.getElementById('receitaTextoInput').value = textoLido;
           status.style.background = '#fff3e8'; status.style.color = '#c2410c';
-          status.textContent = '⚠️ Não identifiquei medicamentos automaticamente. Confira o texto abaixo e remova o que não for remédio.';
+          status.textContent = '⚠️ Não identifiquei remédios automaticamente. Apague o que não for remédio e clique em Adicionar.';
         } else {
+          // ✅ Groq filtrou — mostra APENAS os remédios no campo
           document.getElementById('receitaTextoInput').value = medicamentosTexto;
           status.style.background = '#e8f5ee'; status.style.color = '#1a7a4a';
-          status.textContent = '✅ Medicamentos identificados! Confira abaixo e clique em Adicionar.';
+          status.textContent = '✅ ' + medicamentosTexto.split('\n').filter(l => l.trim()).length + ' medicamento(s) identificado(s)! Confira e clique em Adicionar.';
         }
       } catch(errGroq) {
-        // Se Groq falhar, usa o texto bruto do OCR
+        // Se Groq falhar, mostra texto bruto com aviso
         document.getElementById('receitaTextoInput').value = textoLido;
         status.style.background = '#fff3e8'; status.style.color = '#c2410c';
-        status.textContent = '⚠️ Texto lido! Confira e remova o que não for remédio antes de adicionar.';
+        status.textContent = '⚠️ Texto lido! Apague o que não for remédio antes de clicar em Adicionar.';
       }
     } catch(err) {
       progWrap.style.display = 'none';
@@ -1304,10 +1306,17 @@ function registrarAcesso() {
       if (el && data.total) {
         el.textContent = '📊 ' + parseInt(data.total).toLocaleString('pt-BR') + ' acesso' + (parseInt(data.total) !== 1 ? 's' : '') + ' pela comunidade';
       }
+      // Atualizar contador no header
+      const hdr = document.getElementById('contadorHeader');
+      if (hdr && data.total) {
+        hdr.textContent = '👥 ' + parseInt(data.total).toLocaleString('pt-BR');
+      }
     })
     .catch(function() {
       const el = document.getElementById('contadorAcessos');
       if (el) el.textContent = '📊 ' + local.toLocaleString('pt-BR') + ' acesso' + (local !== 1 ? 's' : '') + ' neste dispositivo';
+      const hdr = document.getElementById('contadorHeader');
+      if (hdr) hdr.textContent = '👥 ' + local.toLocaleString('pt-BR');
     });
   } catch(e) {}
 }
