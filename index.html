@@ -183,6 +183,20 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .app-topbar{background:linear-gradient(135deg,#0d4f2e,#1a7a4a);color:white;text-align:center;padding:10px 16px;font-size:15px;font-weight:900;letter-spacing:1px;display:flex;align-items:center;justify-content:center;}
 .offline-badge{background:#e8f5ee;color:#145c38;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-align:center;margin-bottom:10px;}
 .online-badge{background:#e0f2fe;color:#0369a1;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;text-align:center;margin-bottom:10px;}
+
+body.dark-mode { background:#111827 !important; color:#f9fafb !important; }
+body.dark-mode .card, body.dark-mode .stat-box { background:#1f2937 !important; color:#f9fafb !important; }
+body.dark-mode .remedio-item { border-color:#374151 !important; }
+body.dark-mode .remedio-nome { color:#f9fafb !important; }
+body.dark-mode .agenda-item { background:#374151 !important; }
+body.dark-mode .modal { background:#1f2937 !important; color:#f9fafb !important; }
+body.dark-mode .campo input, body.dark-mode .campo select, body.dark-mode .campo textarea { background:#374151 !important; color:#f9fafb !important; border-color:#4b5563 !important; }
+body.dark-mode .tab-btn { color:#9ca3af; }
+body.dark-mode .tab-btn.ativa { color:#4ade80; }
+body.dark-mode .nav-tabs { background:#1f2937; border-color:#374151; }
+body.dark-mode .dica-card, body.dark-mode .consulta-card, body.dark-mode .paciente-card, body.dark-mode .membro-card { background:#1f2937 !important; }
+body.dark-mode .horario-badge { background:#065f46 !important; }
+body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; color:#f9fafb !important; }
 </style>
 </head>
 <body>
@@ -202,9 +216,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       </div>
       <div class="logo-text"><h1>PREVITA</h1><p>Prevenção + Vida</p></div>
     </div>
-    <div class="header-right">
+    <div class="header-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
       <div class="periodo-badge" id="periodoBadge">🌅 Bom dia!</div>
       <div class="header-data" id="headerData"></div>
+      <button onclick="toggleDarkMode()" id="btnDark" style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:8px;padding:3px 8px;font-size:12px;cursor:pointer;font-weight:700;">🌙</button>
       <div id="contadorHeader" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:8px;padding:3px 8px;font-size:10px;font-weight:800;color:white;margin-top:4px;display:inline-block;">👥 ...</div>
     </div>
   </div>
@@ -216,8 +231,66 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
   </div>
 </header>
 
+<!-- TELA INÍCIO - DASHBOARD -->
+<div class="tela ativa" id="tela-inicio">
+  <div style="background:linear-gradient(135deg,#0d4f2e,#1a7a4a);border-radius:18px;padding:18px;margin-bottom:12px;color:white;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div><div id="saudacaoInicio" style="font-size:18px;font-weight:900;">Olá! 👋</div>
+      <div id="subtituloInicio" style="font-size:12px;opacity:0.85;margin-top:3px;font-weight:600;">Bem-vindo ao PREVITA</div></div>
+      <div style="text-align:right;"><div id="dataInicio" style="font-size:11px;opacity:0.75;font-weight:600;"></div></div>
+    </div>
+    <div style="margin-top:12px;background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;">
+      <span>⏰</span>
+      <span id="proximoRemInicio" style="font-size:12px;font-weight:700;flex:1;">Carregando...</span>
+      <span id="badgeInicio" style="background:var(--laranja);color:white;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:800;"></span>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-num" id="stTotal">0</div><div class="stat-label">Remédios</div></div>
+    <div class="stat-box"><div class="stat-num" id="stTomados" style="color:#22c55e;">0</div><div class="stat-label">Tomados</div></div>
+    <div class="stat-box"><div class="stat-num" id="stPendentes" style="color:var(--laranja);">0</div><div class="stat-label">Pendentes</div></div>
+  </div>
+  <div class="card">
+    <div class="card-titulo">⚡ Acesso Rápido</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div onclick="irPara('usuario',document.querySelectorAll('.tab-btn')[6])" style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
+        <div style="font-size:30px;">👤</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:5px;">Meu Perfil</div>
+        <div style="font-size:10px;color:var(--cinza-texto);">Família e pacientes</div>
+      </div>
+      <div onclick="irPara('agenda',document.querySelectorAll('.tab-btn')[1])" style="background:#fff3e8;border:2px solid var(--laranja);border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
+        <div style="font-size:30px;">📅</div><div style="font-size:12px;font-weight:800;color:var(--laranja);margin-top:5px;">Agenda</div>
+        <div style="font-size:10px;color:var(--cinza-texto);">Remédios e consultas</div>
+      </div>
+      <div onclick="irPara('receita',document.querySelectorAll('.tab-btn')[2])" style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
+        <div style="font-size:30px;">📷</div><div style="font-size:12px;font-weight:800;color:#3b82f6;margin-top:5px;">Receita</div>
+        <div style="font-size:10px;color:var(--cinza-texto);">Ler por foto</div>
+      </div>
+      <div onclick="irPara('ia',document.querySelectorAll('.tab-btn')[5])" style="background:#ede9fe;border:2px solid #7c3aed;border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
+        <div style="font-size:30px;">🤖</div><div style="font-size:12px;font-weight:800;color:#7c3aed;margin-top:5px;">PREV</div>
+        <div style="font-size:10px;color:var(--cinza-texto);">Assistente IA</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-titulo">🏥 Próxima Consulta</div>
+    <div id="proximaConsultaInicio"><p class="vazio" style="padding:10px;">Nenhuma consulta cadastrada.</p></div>
+  </div>
+  <div class="card">
+    <div class="card-titulo">💊 Remédios de Hoje</div>
+    <div id="remediosHojeInicio"><p class="vazio" style="padding:10px;">Nenhum remédio cadastrado.</p></div>
+    <div class="progresso-bar"><div class="progresso-fill" id="progrInicio" style="width:0%;"></div></div>
+  </div>
+  <div style="background:#fee2e2;border:2px solid #ef4444;border-radius:14px;padding:14px;display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+    <div style="font-size:36px;">🚨</div>
+    <div style="flex:1;"><div style="font-size:15px;font-weight:900;color:#b91c1c;">Emergência?</div>
+    <div style="font-size:12px;color:#7f1d1d;font-weight:600;">Ligue agora para o SAMU</div></div>
+    <a href="tel:192" style="background:#ef4444;color:white;border-radius:12px;padding:12px 16px;font-size:18px;font-weight:900;text-decoration:none;">📞 192</a>
+  </div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
+</div>
+
 <!-- REMÉDIOS -->
-<div class="tela ativa" id="tela-remedios">
+<div class="tela" id="tela-remedios">
   <div class="banner-info" style="margin-top:14px;">
     <h3>💊 Cuide-se com PREVITA</h3>
     <p>Controle seus remédios, acompanhe consultas e cuide da sua saúde.</p>
@@ -244,7 +317,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
   <div style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px;text-align:center;font-size:14px;font-weight:700;color:var(--verde);">
     💡 Para cadastrar remédios, acesse a aba <strong>Usuário</strong> e configure seu perfil.
   </div>
-  <div class="rodape" style="margin-top:12px;"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
+  <div style="display:flex;gap:8px;margin-bottom:10px;">
+    <button class="btn-verde" onclick="abrirModal()" style="flex:2;">➕ Adicionar Remédio</button>
+    <button onclick="compartilharWhatsApp()" style="flex:1;background:#25d366;color:white;border:none;border-radius:14px;font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;padding:14px 8px;">📲 WhatsApp</button>
+  </div>
+  <div class="rodape" style="margin-top:12px;"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
 </div>
 
 <!-- AGENDA -->
@@ -274,7 +351,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
     <button class="btn-verde" onclick="abrirModalConsulta()" style="margin-bottom:12px;">➕ Inserir Consulta / Exame</button>
     <div id="listaConsultas"><p class="vazio">Nenhuma consulta cadastrada.</p></div>
   </div>
-  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
 </div>
 
 <!-- PACIENTES -->
@@ -286,7 +363,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
   <button class="btn-verde" onclick="abrirModalPaciente()" style="margin-bottom:12px;">➕ Cadastrar Paciente</button>
   <div id="listaPacientes"></div>
   <div class="card" style="font-size:12px;color:var(--cinza-texto);text-align:center;">🔒 Dados apenas neste dispositivo · LGPD Lei 13.709/2018</div>
-  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
 </div>
 
 <!-- MEMBROS -->
@@ -294,13 +371,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
   <div style="margin-top:14px;">
     <div class="card" style="text-align:center;padding:18px;">
       <div style="font-size:38px;margin-bottom:6px;">🏥</div>
-      <h3 style="font-size:15px;font-weight:900;color:var(--verde);">UBS São Pedro</h3>
+      <h3 style="font-size:15px;font-weight:900;color:var(--verde);">PREVITA – Saúde Digital</h3>
       <p style="font-size:12px;color:var(--cinza-texto);font-weight:600;margin-top:3px;">Santana de Parnaíba – SP</p>
     </div>
     <div id="listaMembros"></div>
     <button class="btn-verde" onclick="abrirModalMembro()" style="margin-top:4px;">➕ Adicionar Membro</button>
   </div>
-  <div class="rodape" style="margin-top:12px;"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
+  <div class="rodape" style="margin-top:12px;"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
 </div>
 
 <!-- RECEITA -->
@@ -344,7 +421,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       <button style="flex:1;background:var(--cinza);color:var(--cinza-texto);border:none;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;" onclick="limparReceita()">🗑️ Limpar</button>
     </div>
   </div>
-  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
 </div>
 
 <!-- DICAS -->
@@ -368,7 +445,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
     </div>
     <div id="listaDicas"></div>
   </div>
-  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
 </div>
 
 <!-- GUIA -->
@@ -381,7 +458,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
     </div>
     <div id="listaGuia"></div>
   </div>
-  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
 </div>
 
 <!-- ASSISTENTE -->
@@ -413,7 +490,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       <button class="btn-laranja" style="width:100%;text-align:left;padding:10px 14px;" onclick="perguntaRapida('Para que serve a Levotiroxina?')">💊 Para que serve a Levotiroxina?</button>
     </div>
   </div>
-  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
 </div>
 
 <!-- USUÁRIO -->
@@ -429,7 +506,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       </div>
       <div class="campo"><label>Nome completo</label><input type="text" id="inputNomePerfil" placeholder="Seu nome completo"></div>
       <div class="campo" id="campoMicroarea" style="display:none;"><label>Microárea / Setor</label><input type="text" id="inputMicroarea" placeholder="Ex: Microárea 09"></div>
-      <div class="campo" id="campoUBS" style="display:none;"><label>UBS / Unidade de Saúde</label><input type="text" id="inputUBS" placeholder="Ex: UBS São Pedro"></div>
+      <div class="campo" id="campoUBS" style="display:none;"><label>UBS / Unidade de Saúde</label><input type="text" id="inputUBS" placeholder="Ex: UBS Central, Hospital..."></div>
       <div class="campo"><label>Cidade / Bairro</label><input type="text" id="inputCidade" placeholder="Ex: Santana de Parnaíba – SP"></div>
       <div class="campo"><label>Telefone (opcional)</label><input type="tel" id="inputTelPerfil" placeholder="(11) 9 9999-9999"></div>
       <button class="btn-verde" onclick="salvarPerfil()">💾 Salvar Perfil</button>
@@ -469,13 +546,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
     <button class="btn-verde" onclick="editarPerfil()">✏️ Editar Perfil</button>
     <div style="height:10px;"></div>
     <button class="btn-vermelho" onclick="instalarPWA()" style="width:100%;">📲 Instalar App na Tela Inicial</button>
-    <div class="rodape" style="margin-top:12px;"><strong>Desenvolvido por Wilson Foster</strong><br>ACS / UBS São Pedro | Santana de Parnaíba – SP</div>
+    <div class="rodape" style="margin-top:12px;"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
   </div>
 </div>
 
 <!-- NAV -->
 <nav class="nav-tabs">
-  <button class="tab-btn ativa" onclick="irPara('remedios',this)"><span class="icon">🏠</span>Início</button>
+  <button class="tab-btn ativa" onclick="irPara('inicio',this)"><span class="icon">🏠</span>Início</button>
   <button class="tab-btn" onclick="irPara('agenda',this)"><span class="icon">📅</span>Agenda</button>
   <button class="tab-btn" onclick="irPara('receita',this)"><span class="icon">📋</span>Receita</button>
   <button class="tab-btn" onclick="irPara('dicas',this)"><span class="icon">💡</span>Dicas</button>
@@ -516,7 +593,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
     <div class="campo"><label>Especialidade / Descrição</label><input type="text" id="cEspecialidade" placeholder="Ex: Cardiologista..."></div>
     <div class="campo"><label>Data *</label><input type="date" id="cData"></div>
     <div class="campo"><label>Horário</label><input type="time" id="cHorario"></div>
-    <div class="campo"><label>Local / Unidade de Saúde</label><input type="text" id="cLocal" placeholder="Ex: UBS São Pedro..."></div>
+    <div class="campo"><label>Local / Unidade de Saúde</label><input type="text" id="cLocal" placeholder="Ex: UBS Central, Hospital..."></div>
     <div class="campo"><label>Observações</label><textarea id="cObs" placeholder="Preparo necessário..."></textarea></div>
     <div class="campo">
       <label style="font-size:12px;font-weight:700;color:var(--cinza-texto);display:block;margin-bottom:8px;">🔔 Alertas de Lembrete</label>
@@ -599,8 +676,8 @@ let horasSel = [], periodoSel = '', tipoSelecionado = '', deferredPrompt = null,
 if (!membros) {
   membros = [
     {id:1,nome:'Wilson Foster',cargo:'ACS – Agente Comunitário de Saúde',area:'Microárea 09',tel:'(11) 93959-1627'},
-    {id:2,nome:'Dra. Ana Paula',cargo:'Médico(a)',area:'UBS São Pedro',tel:'Ramal 201'},
-    {id:3,nome:'Enf. Carla Santos',cargo:'Enfermeiro(a)',area:'UBS São Pedro',tel:'Ramal 202'}
+    {id:2,nome:'Dra. Ana Paula',cargo:'Médico(a)',area:'Suporte PREVITA',tel:'Ramal 201'},
+    {id:3,nome:'Enf. Carla Santos',cargo:'Enfermeiro(a)',area:'Suporte PREVITA',tel:'Ramal 202'}
   ];
   localStorage.setItem('pv_membros', JSON.stringify(membros));
 }
@@ -719,6 +796,7 @@ function irPara(tela, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('ativa'));
   document.getElementById('tela-' + tela).classList.add('ativa');
   if (btn) btn.classList.add('ativa');
+  if (tela === 'inicio') { atualizarDashboard(); }
   if (tela === 'agenda') { renderAgenda(); renderConsultas(); }
   if (tela === 'membros') renderMembros();
   if (tela === 'dicas') renderDicas('todos');
@@ -804,6 +882,46 @@ function abrirModal() {
   document.getElementById('horariosGrid').innerHTML = HORARIOS.map(h => '<button class="horario-toggle" data-hora="' + h + '" onclick="toggleHorario(this,\'' + h + '\')">' + h + '</button>').join('');
   document.getElementById('modalRemedio').classList.add('aberto');
 }
+
+var horasSelEd2 = [];
+function abrirEditarRemedio(id) {
+  var r = remedios.find(function(x) { return x.id === id; });
+  if (!r) return;
+  document.getElementById('erId').value = id;
+  document.getElementById('erNome').value = r.nome || '';
+  document.getElementById('erDose').value = r.dose || '';
+  document.getElementById('erObs').value = r.obs || '';
+  horasSelEd2 = (r.horarios || []).slice();
+  document.getElementById('erHorariosGrid').innerHTML = HORARIOS.map(function(h) {
+    var sel2 = horasSelEd2.indexOf(h) !== -1;
+    return '<button class="horario-toggle'+(sel2?' sel':'')+'" data-hora="'+h+'" onclick="toggleHorarioEd(this,this.dataset.hora)">'+h+'</button>';
+  }).join('');
+  document.getElementById('modalEditarRemedio').classList.add('aberto');
+}
+function fecharEditarRemedio() { document.getElementById('modalEditarRemedio').classList.remove('aberto'); }
+function toggleHorarioEd(btn, h) {
+  if (horasSelEd2.indexOf(h) !== -1) { horasSelEd2 = horasSelEd2.filter(function(x) { return x !== h; }); btn.classList.remove('sel'); }
+  else { horasSelEd2.push(h); btn.classList.add('sel'); }
+}
+function salvarEdicaoRemedio() {
+  var id = parseInt(document.getElementById('erId').value);
+  var nome = document.getElementById('erNome').value.trim();
+  if (!nome) { alert('Digite o nome!'); return; }
+  if (!horasSelEd2.length) { alert('Selecione pelo menos um horario!'); return; }
+  var idx2 = remedios.findIndex(function(x) { return x.id === id; });
+  if (idx2 !== -1) {
+    remedios[idx2].nome = nome;
+    remedios[idx2].dose = document.getElementById('erDose').value.trim();
+    remedios[idx2].obs = document.getElementById('erObs').value.trim();
+    remedios[idx2].horarios = horasSelEd2.sort();
+    remedios[idx2].periodo = periodoDoHorario(horasSelEd2[0]);
+    localStorage.setItem('pv_remedios', JSON.stringify(remedios));
+  }
+  fecharEditarRemedio();
+  renderRemedios();
+  mostrarToast('Remedio atualizado!');
+}
+
 function fecharModal() { document.getElementById('modalRemedio').classList.remove('aberto'); }
 function toggleHorario(btn, h) {
   if (horasSel.includes(h)) { horasSel = horasSel.filter(x => x !== h); btn.classList.remove('sel'); }
@@ -1406,6 +1524,49 @@ function renderListaPessoas(containerId) {
   }).join('');
 }
 
+
+function abrirModalEditarPessoa(id) {
+  const pessoas = getPessoas();
+  const p = pessoas.find(function(x) { return String(x.id) === String(id); });
+  if (!p) return;
+  pessoaAtualId = id;
+  document.getElementById('epNome').value = p.nome || '';
+  document.getElementById('epRelacao').value = p.relacao || '';
+  document.getElementById('epNascimento').value = p.nascimento || '';
+  document.getElementById('epTel').value = p.tel || '';
+  document.getElementById('epCondicao').value = p.condicao || '';
+  document.getElementById('modalEditarPessoa').classList.add('aberto');
+}
+function fecharModalEditarPessoa() { document.getElementById('modalEditarPessoa').classList.remove('aberto'); }
+
+function salvarEdicaoPessoa() {
+  const id = pessoaAtualId;
+  const nome = document.getElementById('epNome').value.trim();
+  if (!nome) { alert('Digite o nome!'); return; }
+  const nasc = document.getElementById('epNascimento').value;
+  let idade = '';
+  if (nasc) {
+    const diff = new Date() - new Date(nasc);
+    idade = Math.floor(diff / (365.25*24*3600*1000)) + ' anos';
+  }
+  const pessoas = getPessoas();
+  const idx = pessoas.findIndex(function(x) { return String(x.id) === String(id); });
+  if (idx !== -1) {
+    pessoas[idx].nome = nome;
+    if (!pessoas[idx].principal) pessoas[idx].relacao = document.getElementById('epRelacao').value;
+    pessoas[idx].nascimento = nasc;
+    pessoas[idx].idade = idade;
+    pessoas[idx].tel = document.getElementById('epTel').value.trim();
+    pessoas[idx].condicao = document.getElementById('epCondicao').value;
+    setPessoas(pessoas);
+  }
+  fecharModalEditarPessoa();
+  renderListaPessoas('listaPessoasACS');
+  renderListaPessoas('listaPessoasPac');
+  renderVerPessoa(id);
+  mostrarToast('✅ Cadastro atualizado!');
+}
+
 function abrirModalNovaPessoa() {
   const tipo = perfil ? perfil.tipo : '';
   document.getElementById('tituloModalPessoa').textContent = (tipo==='ACS'||tipo==='Cuidador') ? '➕ Novo Paciente' : '➕ Novo Membro da Família';
@@ -1497,9 +1658,13 @@ function renderVerPessoa(id) {
     h += '</div>';
   }
 
+  // Botão editar (para todos)
+  h += '<div style="display:flex;gap:8px;margin-top:12px;">';
+  h += '<button onclick="abrirModalEditarPessoa(\"'+id+'\")" style="flex:1;padding:12px;background:var(--verde-claro);color:var(--verde);border:2px solid var(--verde);border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">✏️ Editar</button>';
   if (!p.principal) {
-    h += '<button class="btn-vermelho" onclick="excluirPessoa(\"'+id+'\")" style="width:100%;margin-top:8px;">🗑️ Excluir</button>';
+    h += '<button onclick="excluirPessoa(\"'+id+'\")" class="btn-vermelho" style="flex:1;">🗑️ Excluir</button>';
   }
+  h += '</div>';
   document.getElementById('verPessoaConteudo').innerHTML = h;
 }
 
@@ -1756,6 +1921,116 @@ setInterval(atualizarHeader, 60000); setInterval(verificarAlertas, 60000); setTi
   <div class="modal">
     <button class="modal-fechar" onclick="fecharModalVerPessoa()">✕</button>
     <div id="verPessoaConteudo"></div>
+  </div>
+</div>
+
+
+<!-- MODAL EDITAR PESSOA -->
+<div id="modalEditarPessoa" class="modal-overlay">
+  <div class="modal">
+    <button class="modal-fechar" onclick="fecharModalEditarPessoa()">✕</button>
+    <h2>✏️ Editar Cadastro</h2>
+    <div class="campo"><label>Nome completo *</label><input type="text" id="epNome" placeholder="Nome completo"></div>
+    <div class="campo"><label>Grau de Parentesco / Relação</label>
+      <select id="epRelacao">
+        <option value="">Selecionar...</option>
+        <option>Cônjuge / Esposo(a)</option>
+        <option>Filho(a)</option>
+        <option>Pai</option>
+        <option>Mãe</option>
+        <option>Avô</option>
+        <option>Avó</option>
+        <option>Irmão / Irmã</option>
+        <option>Neto(a)</option>
+        <option>Tio(a)</option>
+        <option>Sobrinho(a)</option>
+        <option>Primo(a)</option>
+        <option>Genro / Nora</option>
+        <option>Sogro(a)</option>
+        <option>Padrasto / Madrasta</option>
+        <option>Enteado(a)</option>
+        <option>Cuidado(a) / Paciente</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="campo"><label>Data de Nascimento</label><input type="date" id="epNascimento"></div>
+    <div class="campo"><label>Telefone</label><input type="tel" id="epTel" placeholder="(11) 9 9999-9999"></div>
+    <div class="campo"><label>Condições de Saúde</label>
+      <select id="epCondicao">
+        <option value="">Selecionar...</option>
+        <optgroup label="Cardiovascular">
+          <option>Hipertensão</option><option>Insuficiência Cardíaca</option>
+          <option>Arritmia Cardíaca</option><option>Infarto prévio</option>
+          <option>AVC prévio</option><option>Colesterol alto</option>
+        </optgroup>
+        <optgroup label="Metabólico / Endócrino">
+          <option>Diabetes Tipo 1</option><option>Diabetes Tipo 2</option>
+          <option>Diabetes + Hipertensão</option><option>Hipotireoidismo</option>
+          <option>Hipertireoidismo</option><option>Obesidade</option><option>Gota</option>
+        </optgroup>
+        <optgroup label="Respiratório">
+          <option>Asma</option><option>DPOC</option>
+          <option>Rinite / Sinusite crônica</option><option>Apneia do sono</option>
+        </optgroup>
+        <optgroup label="Renal / Urinário">
+          <option>Doença Renal Crônica</option><option>Cálculo renal</option>
+          <option>Incontinência urinária</option><option>Próstata aumentada</option>
+        </optgroup>
+        <optgroup label="Digestivo">
+          <option>Gastrite / Úlcera</option><option>Refluxo</option>
+          <option>Doença de Crohn</option><option>Colite</option><option>Cirrose / Hepatite</option>
+        </optgroup>
+        <optgroup label="Neurológico / Mental">
+          <option>Depressão</option><option>Ansiedade</option>
+          <option>Transtorno Bipolar</option><option>Esquizofrenia</option>
+          <option>Alzheimer / Demência</option><option>Parkinson</option>
+          <option>Epilepsia</option><option>Enxaqueca crônica</option>
+        </optgroup>
+        <optgroup label="Ósseo / Muscular">
+          <option>Osteoporose</option><option>Artrite / Artrose</option>
+          <option>Fibromialgia</option><option>Hérnia de disco</option>
+        </optgroup>
+        <optgroup label="Outros">
+          <option>Anemia</option><option>Câncer (em tratamento)</option>
+          <option>Câncer (em remissão)</option><option>HIV / AIDS</option>
+          <option>Lúpus</option><option>Gestante</option>
+          <option>Idoso – Múltiplas condições</option>
+          <option>Pessoa com deficiência</option>
+          <option>Sem condição crônica</option><option>Outra</option>
+        </optgroup>
+      </select>
+    </div>
+    <button class="btn-verde" onclick="salvarEdicaoPessoa()">💾 Salvar Alterações</button>
+  </div>
+</div>
+
+
+<!-- MODAL EDITAR REMÉDIO -->
+<div id="modalEditarRemedio" class="modal-overlay">
+  <div class="modal">
+    <button class="modal-fechar" onclick="fecharEditarRemedio()">✕</button>
+    <h2>✏️ Editar Remédio</h2>
+    <input type="hidden" id="erId">
+    <div class="campo"><label>Nome do remédio *</label><input type="text" id="erNome" placeholder="Ex: Metformina 500mg"></div>
+    <div class="campo"><label>Dosagem</label><input type="text" id="erDose" placeholder="Ex: 1 comprimido"></div>
+    <div class="campo"><label>Horários</label><div class="horarios-grid" id="erHorariosGrid"></div></div>
+    <div class="campo"><label>Observação</label><input type="text" id="erObs" placeholder="Ex: tomar com alimento..."></div>
+    <button class="btn-verde" onclick="salvarEdicaoRemedio()">💾 Salvar Alterações</button>
+  </div>
+</div>
+
+
+<!-- MODAL EDITAR REMÉDIO -->
+<div id="modalEditarRemedio" class="modal-overlay">
+  <div class="modal">
+    <button class="modal-fechar" onclick="fecharEditarRemedio()">✕</button>
+    <h2>✏️ Editar Remédio</h2>
+    <input type="hidden" id="erId">
+    <div class="campo"><label>Nome *</label><input type="text" id="erNome"></div>
+    <div class="campo"><label>Dosagem</label><input type="text" id="erDose"></div>
+    <div class="campo"><label>Horários</label><div class="horarios-grid" id="erHorariosGrid"></div></div>
+    <div class="campo"><label>Observação</label><input type="text" id="erObs"></div>
+    <button class="btn-verde" onclick="salvarEdicaoRemedio()">💾 Salvar Alterações</button>
   </div>
 </div>
 
