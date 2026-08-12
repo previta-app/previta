@@ -1360,6 +1360,162 @@ function selecionarTipo(tipo) {
   document.getElementById('campoMicroarea').style.display = tipo === 'ACS' ? 'block' : 'none';
   document.getElementById('campoUBS').style.display = tipo === 'ACS' ? 'block' : 'none';
 }
+
+// ===== SISTEMA DE PESSOAS (Família / Pacientes) =====
+let pessoaAtualId = null;
+
+function getPessoas() {
+  return JSON.parse(localStorage.getItem('pv_pessoas') || '[]');
+}
+function setPessoas(lista) {
+  localStorage.setItem('pv_pessoas', JSON.stringify(lista));
+}
+
+function garantirPessoaPrincipal() {
+  if (!perfil) return;
+  let pessoas = getPessoas();
+  const temPrincipal = pessoas.find(function(p) { return p.principal; });
+  if (!temPrincipal) {
+    pessoas.unshift({id:'principal', nome:perfil.nome, relacao:perfil.tipo==='ACS'?'ACS':perfil.tipo==='Cuidador'?'Cuidador':'Responsável', tel:perfil.tel||'', condicao:'', nascimento:'', idade:'', principal:true});
+    setPessoas(pessoas);
+  } else {
+    temPrincipal.nome = perfil.nome;
+    setPessoas(pessoas);
+  }
+}
+
+function renderListaPessoas(containerId) {
+  const div = document.getElementById(containerId);
+  if (!div) return;
+  garantirPessoaPrincipal();
+  const pessoas = getPessoas();
+  if (!pessoas.length) { div.innerHTML = '<p class="vazio">Nenhuma pessoa cadastrada.</p>'; return; }
+  div.innerHTML = pessoas.map(function(p) {
+    const remCount = JSON.parse(localStorage.getItem('pv_remedios_pac_' + p.id) || '[]').length;
+    const consCount = JSON.parse(localStorage.getItem('pv_consultas_pac_' + p.id) || '[]').length;
+    const isPrincipal = p.principal;
+    return '<div onclick="verPessoa(\"' + p.id + '\")" style="display:flex;align-items:center;gap:12px;padding:12px;background:' + (isPrincipal?'var(--verde-claro)':'white') + ';border:2px solid ' + (isPrincipal?'var(--verde)':'#e5e7eb') + ';border-radius:14px;margin-bottom:8px;cursor:pointer;">' +
+      '<div style="width:46px;height:46px;border-radius:50%;background:' + (isPrincipal?'var(--verde)':'#e0f2fe') + ';display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">' + (isPrincipal?'⭐':'👤') + '</div>' +
+      '<div style="flex:1;">' +
+        '<div style="font-size:15px;font-weight:800;">' + p.nome + (isPrincipal?' <span style="font-size:10px;background:var(--verde);color:white;border-radius:6px;padding:2px 7px;">Você</span>':'') + '</div>' +
+        '<div style="font-size:11px;color:var(--cinza-texto);font-weight:600;margin-top:2px;">' + (p.relacao||'') + (p.idade?' · '+p.idade:'') + (p.condicao?' · '+p.condicao:'') + '</div>' +
+        '<div style="font-size:11px;color:var(--verde);font-weight:700;margin-top:3px;">💊 ' + remCount + ' remédio' + (remCount!==1?'s':'') + '  📅 ' + consCount + ' consulta' + (consCount!==1?'s':'') + '</div>' +
+      '</div>' +
+      '<span style="font-size:20px;color:var(--cinza-texto);">›</span>' +
+    '</div>';
+  }).join('');
+}
+
+function abrirModalNovaPessoa() {
+  const tipo = perfil ? perfil.tipo : '';
+  document.getElementById('tituloModalPessoa').textContent = (tipo==='ACS'||tipo==='Cuidador') ? '➕ Novo Paciente' : '➕ Novo Membro da Família';
+  ['npNome','npTel','npNascimento'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('npCondicao').value = '';
+  document.getElementById('npRelacao').value = '';
+  document.getElementById('modalNovaPessoa').classList.add('aberto');
+}
+function fecharModalNovaPessoa() { document.getElementById('modalNovaPessoa').classList.remove('aberto'); }
+
+function salvarNovaPessoa() {
+  const nome = document.getElementById('npNome').value.trim();
+  if (!nome) { alert('Digite o nome!'); return; }
+  const nasc = document.getElementById('npNascimento').value;
+  let idade = '';
+  if (nasc) {
+    const diff = new Date() - new Date(nasc);
+    idade = Math.floor(diff / (365.25*24*3600*1000)) + ' anos';
+  }
+  const pessoas = getPessoas();
+  pessoas.push({id:Date.now(), nome:nome, relacao:document.getElementById('npRelacao').value, nascimento:nasc, idade:idade, tel:document.getElementById('npTel').value.trim(), condicao:document.getElementById('npCondicao').value, principal:false});
+  setPessoas(pessoas);
+  fecharModalNovaPessoa();
+  renderListaPessoas('listaPessoasACS');
+  renderListaPessoas('listaPessoasPac');
+  mostrarToast('✅ Pessoa adicionada!');
+}
+
+function verPessoa(id) {
+  pessoaAtualId = id;
+  renderVerPessoa(id);
+  document.getElementById('modalVerPessoa').classList.add('aberto');
+}
+function fecharModalVerPessoa() { document.getElementById('modalVerPessoa').classList.remove('aberto'); }
+
+function renderVerPessoa(id) {
+  const pessoas = getPessoas();
+  const p = pessoas.find(function(x) { return String(x.id)===String(id); });
+  if (!p) return;
+  const remPac = JSON.parse(localStorage.getItem('pv_remedios_pac_'+id)||'[]');
+  const consPac = JSON.parse(localStorage.getItem('pv_consultas_pac_'+id)||'[]');
+  const hoje2 = new Date().toISOString().split('T')[0];
+  const MESES2 = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+  let h = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">';
+  h += '<div style="width:54px;height:54px;border-radius:50%;background:' + (p.principal?'var(--verde)':'#e0f2fe') + ';display:flex;align-items:center;justify-content:center;font-size:26px;">' + (p.principal?'⭐':'👤') + '</div>';
+  h += '<div><div style="font-size:18px;font-weight:900;">' + p.nome + '</div>';
+  h += '<div style="font-size:12px;color:var(--cinza-texto);font-weight:600;">' + (p.relacao||'') + (p.idade?' · '+p.idade:'') + (p.condicao?' · '+p.condicao:'') + '</div>';
+  if (p.nascimento) { const dn=new Date(p.nascimento+'T12:00:00'); h += '<div style="font-size:12px;color:var(--cinza-texto);">🎂 ' + dn.toLocaleDateString("pt-BR") + '</div>'; }
+  if (p.tel) h += '<div style="font-size:12px;color:var(--verde);font-weight:700;">📱 ' + p.tel + '</div>';
+  h += '</div></div>';
+
+  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">';
+  h += '<div style="font-size:14px;font-weight:800;color:var(--verde);">💊 Remédios (' + remPac.length + ')</div>';
+  h += '<button onclick="abrirModalRemPaciente(\"'+id+'\")" style="background:var(--verde);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">➕</button>';
+  h += '</div>';
+  if (!remPac.length) {
+    h += '<div style="text-align:center;padding:10px;color:var(--cinza-texto);font-size:12px;background:var(--cinza);border-radius:10px;margin-bottom:12px;">Nenhum remédio</div>';
+  } else {
+    h += '<div style="margin-bottom:12px;">';
+    remPac.forEach(function(r) {
+      h += '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--verde-claro);border-radius:10px;margin-bottom:6px;">';
+      h += '<span style="font-size:18px;">💊</span><div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + r.nome + '</div>';
+      h += '<div style="font-size:11px;color:var(--cinza-texto);">' + (r.dose||'') + (r.horarios?' · '+r.horarios.join(', '):'') + '</div></div>';
+      h += '<button onclick="excluirRemPaciente(\"'+id+'\",'+r.id+')" style="background:#fee2e2;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;">🗑️</button>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">';
+  h += '<div style="font-size:14px;font-weight:800;color:var(--verde);">📅 Consultas (' + consPac.length + ')</div>';
+  h += '<button onclick="abrirModalConsPaciente(\"'+id+'\")" style="background:var(--laranja);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">➕</button>';
+  h += '</div>';
+  if (!consPac.length) {
+    h += '<div style="text-align:center;padding:10px;color:var(--cinza-texto);font-size:12px;background:var(--cinza);border-radius:10px;margin-bottom:12px;">Nenhuma consulta</div>';
+  } else {
+    h += '<div style="margin-bottom:12px;">';
+    consPac.forEach(function(c) {
+      const d = new Date(c.data+'T12:00:00');
+      const passada = c.data < hoje2;
+      h += '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:' + (passada?'#f3f4f6':'#e0f2fe') + ';border-radius:10px;margin-bottom:6px;">';
+      h += '<div style="background:var(--verde);color:white;border-radius:8px;padding:4px 8px;text-align:center;min-width:38px;flex-shrink:0;"><div style="font-size:15px;font-weight:900;line-height:1;">' + d.getDate().toString().padStart(2,'0') + '</div><div style="font-size:9px;font-weight:700;">' + MESES2[d.getMonth()] + '</div></div>';
+      h += '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + c.tipo + '</div>';
+      h += '<div style="font-size:11px;color:var(--cinza-texto);">' + (c.especialidade||'') + (c.local?' · '+c.local:'') + '</div></div>';
+      h += '<button onclick="excluirConsPaciente(\"'+id+'\",'+c.id+')" style="background:#fee2e2;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;">🗑️</button>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  if (!p.principal) {
+    h += '<button class="btn-vermelho" onclick="excluirPessoa(\"'+id+'\")" style="width:100%;margin-top:8px;">🗑️ Excluir</button>';
+  }
+  document.getElementById('verPessoaConteudo').innerHTML = h;
+}
+
+function excluirPessoa(id) {
+  if (!confirm('Excluir esta pessoa e todos os seus dados?')) return;
+  let pessoas = getPessoas();
+  pessoas = pessoas.filter(function(p) { return String(p.id)!==String(id); });
+  setPessoas(pessoas);
+  localStorage.removeItem('pv_remedios_pac_'+id);
+  localStorage.removeItem('pv_consultas_pac_'+id);
+  fecharModalVerPessoa();
+  renderListaPessoas('listaPessoasACS');
+  renderListaPessoas('listaPessoasPac');
+  mostrarToast('🗑️ Pessoa excluída.');
+}
+
 function salvarPerfil() {
   const nome = document.getElementById('inputNomePerfil').value.trim();
   if (!nome) { alert('Digite seu nome!'); return; } if (!tipoSelecionado) { alert('Selecione o tipo!'); return; }
@@ -1393,8 +1549,8 @@ function renderPerfil() {
   document.getElementById('submenuACS').style.display = (perfil.tipo==='ACS'||perfil.tipo==='Cuidador') ? 'block' : 'none';
   document.getElementById('submenuPaciente').style.display = perfil.tipo==='Paciente' ? 'block' : 'none';
   garantirPessoaPrincipal();
-  renderListaPessoas('listaPessoasACS', 'acs');
-  renderListaPessoas('listaPessoasPac', 'pac');
+  renderListaPessoas('listaPessoasACS');
+  renderListaPessoas('listaPessoasPac');
   document.getElementById('infosPerfilLista').innerHTML = h;
 }
 function editarPerfil() {
