@@ -991,7 +991,7 @@ function abrirModalRemPaciente(pacId) {
   horasSel = []; periodoSel = '';
   ['mNome','mDose','mObs'].forEach(function(id) { document.getElementById(id).value = ''; });
   ['manha','tarde','noite'].forEach(function(x) { document.getElementById('periodo'+capitalize(x)).className = 'periodo-box '+x; });
-  document.getElementById('horariosGrid').innerHTML = HORARIOS.map(function(h) { return '<button class="horario-toggle" data-hora="'+h+'" onclick="toggleHorario(this,''+h+'')">'+h+'</button>'; }).join('');
+  document.getElementById('horariosGrid').innerHTML = HORARIOS.map(function(h) { return '<button class="horario-toggle" data-hora="'+h+'" onclick="toggleHorario(this, this.dataset.hora)">'+h+'</button>'; }).join('');
   // Mudar o salvar para salvar no paciente
   document.querySelector('#modalRemedio .btn-verde').setAttribute('onclick','salvarRemPaciente()');
   document.getElementById('modalRemedio').classList.add('aberto');
