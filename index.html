@@ -357,6 +357,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
       <button class="dica-filtro" onclick="filtrarDicas('pressao',this)">❤️ Pressão</button>
       <button class="dica-filtro" onclick="filtrarDicas('diabetes',this)">🩸 Diabetes</button>
       <button class="dica-filtro" onclick="filtrarDicas('exercicio',this)">🏃 Exercício</button>
+      <button class="dica-filtro" onclick="filtrarDicas('sono',this)">😴 Sono</button>
+      <button class="dica-filtro" onclick="filtrarDicas('coracao',this)">🫀 Coração</button>
+      <button class="dica-filtro" onclick="filtrarDicas('rins',this)">💧 Rins</button>
+      <button class="dica-filtro" onclick="filtrarDicas('respiracao',this)">🫁 Respiração</button>
+      <button class="dica-filtro" onclick="filtrarDicas('mulher',this)">👩 Saúde da Mulher</button>
+      <button class="dica-filtro" onclick="filtrarDicas('homem',this)">👨 Saúde do Homem</button>
+      <button class="dica-filtro" onclick="filtrarDicas('pele',this)">☀️ Pele</button>
+      <button class="dica-filtro" onclick="filtrarDicas('bucal',this)">🦷 Bucal</button>
     </div>
     <div id="listaDicas"></div>
   </div>
@@ -1108,7 +1116,7 @@ function filtrarDicas(cat, btn) { document.querySelectorAll('.dica-filtro').forE
 function renderDicas(cat) {
   const div = document.getElementById('listaDicas');
   const lista = cat === 'todos' ? DICAS : DICAS.filter(d => d.cat === cat);
-  const labels = {medicamento:'💊 Remédio',alimentacao:'🥗 Alimentação',pressao:'❤️ Pressão',diabetes:'🩸 Diabetes',exercicio:'🏃 Exercício'};
+  const labels = {medicamento:'💊 Remédio',alimentacao:'🥗 Alimentação',pressao:'❤️ Pressão',diabetes:'🩸 Diabetes',exercicio:'🏃 Exercício',sono:'😴 Sono',coracao:'🫀 Coração',rins:'💧 Rins',respiracao:'🫁 Respiração',mulher:'👩 Saúde da Mulher',homem:'👨 Saúde do Homem',pele:'☀️ Pele',bucal:'🦷 Bucal'};
   div.innerHTML = lista.map(d => '<div class="dica-card"><div class="dica-tag">' + (labels[d.cat]||d.cat) + '</div><div class="dica-titulo">' + d.titulo + '</div><div class="dica-texto">' + d.texto + '</div></div>').join('');
 }
 
@@ -1356,7 +1364,19 @@ function salvarPerfil() {
   const nome = document.getElementById('inputNomePerfil').value.trim();
   if (!nome) { alert('Digite seu nome!'); return; } if (!tipoSelecionado) { alert('Selecione o tipo!'); return; }
   perfil = {nome, tipo:tipoSelecionado, microarea:document.getElementById('inputMicroarea').value.trim(), ubs:document.getElementById('inputUBS').value.trim(), cidade:document.getElementById('inputCidade').value.trim(), tel:document.getElementById('inputTelPerfil').value.trim()};
-  localStorage.setItem('pv_perfil', JSON.stringify(perfil)); renderPerfil(); mostrarToast('✅ Perfil salvo!');
+  localStorage.setItem('pv_perfil', JSON.stringify(perfil));
+  garantirPessoaPrincipal();
+  renderPerfil();
+  mostrarToast('✅ Perfil salvo!');
+  // Se for primeiro cadastro, perguntar se quer adicionar membro
+  setTimeout(function() {
+    const pessoas = getPessoas();
+    if (pessoas.length <= 1) {
+      if (confirm('Perfil salvo! Deseja adicionar um membro da família ou paciente agora?')) {
+        abrirModalNovaPessoa();
+      }
+    }
+  }, 500);
 }
 function renderPerfil() {
   if (!perfil) { document.getElementById('painelSemPerfil').style.display = 'block'; document.getElementById('painelComPerfil').style.display = 'none'; return; }
@@ -1478,16 +1498,97 @@ setInterval(atualizarHeader, 60000); setInterval(verificarAlertas, 60000); setTi
     <button class="modal-fechar" onclick="fecharModalNovaPessoa()">✕</button>
     <h2 id="tituloModalPessoa">➕ Nova Pessoa</h2>
     <div class="campo"><label>Nome completo *</label><input type="text" id="npNome" placeholder="Nome completo"></div>
-    <div class="campo"><label>Relação / Parentesco</label><input type="text" id="npRelacao" placeholder="Ex: Esposa, Filho, Paciente, Mãe..."></div>
+    <div class="campo"><label>Grau de Parentesco / Relação</label>
+      <select id="npRelacao">
+        <option value="">Selecionar...</option>
+        <option>Cônjuge / Esposo(a)</option>
+        <option>Filho(a)</option>
+        <option>Pai</option>
+        <option>Mãe</option>
+        <option>Avô</option>
+        <option>Avó</option>
+        <option>Irmão / Irmã</option>
+        <option>Neto(a)</option>
+        <option>Tio(a)</option>
+        <option>Sobrinho(a)</option>
+        <option>Primo(a)</option>
+        <option>Genro / Nora</option>
+        <option>Sogro(a)</option>
+        <option>Padrasto / Madrasta</option>
+        <option>Enteado(a)</option>
+        <option>Cuidado(a) / Paciente</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="campo"><label>Data de Nascimento</label><input type="date" id="npNascimento"></div>
     <div class="campo"><label>Telefone</label><input type="tel" id="npTel" placeholder="(11) 9 9999-9999"></div>
-    <div class="campo"><label>Condição principal</label>
+    <div class="campo"><label>Condições de Saúde</label>
       <select id="npCondicao">
         <option value="">Selecionar...</option>
-        <option>Hipertensão</option><option>Diabetes Tipo 1</option><option>Diabetes Tipo 2</option>
-        <option>Diabetes + Hipertensão</option><option>Hipotireoidismo</option><option>Hipertireoidismo</option>
-        <option>Doença Cardíaca</option><option>DPOC / Asma</option><option>Depressão</option>
-        <option>Ansiedade</option><option>Osteoporose</option><option>Doença Renal</option>
-        <option>Gestante</option><option>Idoso – Múltiplas condições</option><option>Outra</option>
+        <optgroup label="Cardiovascular">
+          <option>Hipertensão</option>
+          <option>Insuficiência Cardíaca</option>
+          <option>Arritmia Cardíaca</option>
+          <option>Infarto prévio</option>
+          <option>AVC prévio</option>
+          <option>Colesterol alto</option>
+        </optgroup>
+        <optgroup label="Metabólico / Endócrino">
+          <option>Diabetes Tipo 1</option>
+          <option>Diabetes Tipo 2</option>
+          <option>Diabetes + Hipertensão</option>
+          <option>Hipotireoidismo</option>
+          <option>Hipertireoidismo</option>
+          <option>Obesidade</option>
+          <option>Gota</option>
+        </optgroup>
+        <optgroup label="Respiratório">
+          <option>Asma</option>
+          <option>DPOC</option>
+          <option>Rinite / Sinusite crônica</option>
+          <option>Apneia do sono</option>
+        </optgroup>
+        <optgroup label="Renal / Urinário">
+          <option>Doença Renal Crônica</option>
+          <option>Cálculo renal</option>
+          <option>Incontinência urinária</option>
+          <option>Próstata aumentada</option>
+        </optgroup>
+        <optgroup label="Digestivo">
+          <option>Gastrite / Úlcera</option>
+          <option>Refluxo</option>
+          <option>Doença de Crohn</option>
+          <option>Colite</option>
+          <option>Cirrose / Hepatite</option>
+        </optgroup>
+        <optgroup label="Neurológico / Mental">
+          <option>Depressão</option>
+          <option>Ansiedade</option>
+          <option>Transtorno Bipolar</option>
+          <option>Esquizofrenia</option>
+          <option>Alzheimer / Demência</option>
+          <option>Parkinson</option>
+          <option>Epilepsia</option>
+          <option>Enxaqueca crônica</option>
+        </optgroup>
+        <optgroup label="Ósseo / Muscular">
+          <option>Osteoporose</option>
+          <option>Artrite / Artrose</option>
+          <option>Fibromialgia</option>
+          <option>Hérnia de disco</option>
+        </optgroup>
+        <optgroup label="Outros">
+          <option>Anemia</option>
+          <option>Câncer (em tratamento)</option>
+          <option>Câncer (em remissão)</option>
+          <option>HIV / AIDS</option>
+          <option>Lúpus</option>
+          <option>Gestante</option>
+          <option>Idoso – Múltiplas condições</option>
+          <option>Pessoa com deficiência</option>
+          <option>Sem condição crônica</option>
+          <option>Outra</option>
+        </optgroup>
       </select>
     </div>
     <button class="btn-verde" onclick="salvarNovaPessoa()">💾 Salvar</button>
