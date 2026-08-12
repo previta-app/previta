@@ -905,19 +905,170 @@ function renderPacientes() {
   document.getElementById('totalPacientes').textContent = pacientes.length;
   document.getElementById('totalVisitas').textContent = Math.floor(pacientes.length * 0.7);
 }
+// Paciente atual sendo visualizado
+let pacienteAtualId = null;
+
 function verPaciente(id) {
-  const p = pacientes.find(x => x.id === id); if (!p) return;
-  document.getElementById('verPacienteConteudo').innerHTML =
-    '<h2>👤 ' + p.nome + '</h2>' +
-    '<div style="display:flex;flex-direction:column;gap:8px;margin:14px 0;">' +
-    (p.end ? '<div style="font-size:14px;font-weight:600;">📍 ' + p.end + '</div>' : '') +
-    (p.tel ? '<div style="font-size:14px;font-weight:600;">📱 <a href="tel:' + p.tel + '" style="color:var(--verde);">' + p.tel + '</a></div>' : '') +
-    (p.condicao ? '<div style="font-size:14px;font-weight:600;">🏥 ' + p.condicao + '</div>' : '') +
-    (p.meds ? '<div style="font-size:14px;font-weight:600;">💊 ' + p.meds + '</div>' : '') +
-    '</div>' +
-    (p.receitaImg ? '<div class="card-titulo">📋 Receita</div><div class="receita-preview"><img src="' + p.receitaImg + '" style="width:100%;max-height:250px;object-fit:contain;border-radius:10px;"></div>' : '') +
-    '<button class="btn-vermelho" onclick="excluirPaciente(' + p.id + ')" style="width:100%;margin-top:16px;">🗑️ Excluir Paciente</button>';
+  pacienteAtualId = id;
+  renderVerPaciente(id);
   document.getElementById('modalVerPaciente').classList.add('aberto');
+}
+
+function renderVerPaciente(id) {
+  const p = pacientes.find(x => x.id === id); if (!p) return;
+  const remPac = JSON.parse(localStorage.getItem('pv_remedios_pac_' + id) || '[]');
+  const consPac = JSON.parse(localStorage.getItem('pv_consultas_pac_' + id) || '[]');
+  const hoje2 = new Date().toISOString().split('T')[0];
+
+  let html2 = '<h2 style="color:var(--verde);font-size:18px;font-weight:900;margin-bottom:12px;">👤 ' + p.nome + '</h2>';
+
+  // Dados básicos
+  html2 += '<div style="background:var(--cinza);border-radius:12px;padding:12px;margin-bottom:12px;">';
+  if (p.end) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">📍 ' + p.end + '</div>';
+  if (p.tel) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">📱 <a href="tel:' + p.tel + '" style="color:var(--verde);">' + p.tel + '</a></div>';
+  if (p.condicao) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">🏥 ' + p.condicao + '</div>';
+  html2 += '</div>';
+
+  // REMÉDIOS INDIVIDUAIS
+  html2 += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">';
+  html2 += '<div style="font-size:14px;font-weight:800;color:var(--verde);">💊 Remédios (' + remPac.length + ')</div>';
+  html2 += '<button onclick="abrirModalRemPaciente(' + id + ')" style="background:var(--verde);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">➕ Adicionar</button>';
+  html2 += '</div>';
+
+  if (remPac.length === 0) {
+    html2 += '<div style="text-align:center;padding:12px;color:var(--cinza-texto);font-size:13px;background:var(--cinza);border-radius:10px;margin-bottom:12px;">Nenhum remédio cadastrado</div>';
+  } else {
+    html2 += '<div style="margin-bottom:12px;">';
+    remPac.forEach(function(r) {
+      html2 += '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--verde-claro);border-radius:10px;margin-bottom:6px;">';
+      html2 += '<span style="font-size:20px;">💊</span>';
+      html2 += '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + r.nome + '</div>';
+      html2 += '<div style="font-size:11px;color:var(--cinza-texto);">' + (r.dose||'') + (r.horarios?' · '+r.horarios.join(', '):'') + '</div></div>';
+      html2 += '<button onclick="excluirRemPaciente(' + id + ',' + r.id + ')" style="background:#fee2e2;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:13px;">🗑️</button>';
+      html2 += '</div>';
+    });
+    html2 += '</div>';
+  }
+
+  // CONSULTAS INDIVIDUAIS
+  html2 += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">';
+  html2 += '<div style="font-size:14px;font-weight:800;color:var(--verde);">📅 Consultas (' + consPac.length + ')</div>';
+  html2 += '<button onclick="abrirModalConsPaciente(' + id + ')" style="background:var(--laranja);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">➕ Adicionar</button>';
+  html2 += '</div>';
+
+  if (consPac.length === 0) {
+    html2 += '<div style="text-align:center;padding:12px;color:var(--cinza-texto);font-size:13px;background:var(--cinza);border-radius:10px;margin-bottom:12px;">Nenhuma consulta cadastrada</div>';
+  } else {
+    html2 += '<div style="margin-bottom:12px;">';
+    consPac.forEach(function(c) {
+      const d = new Date(c.data+'T12:00:00');
+      const passada = c.data < hoje2;
+      html2 += '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:' + (passada?'#f3f4f6':'#e0f2fe') + ';border-radius:10px;margin-bottom:6px;">';
+      html2 += '<div style="background:var(--verde);color:white;border-radius:8px;padding:4px 8px;text-align:center;min-width:40px;"><div style="font-size:16px;font-weight:900;line-height:1;">' + d.getDate().toString().padStart(2,'0') + '</div><div style="font-size:9px;font-weight:700;">' + ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][d.getMonth()] + '</div></div>';
+      html2 += '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + c.tipo + '</div>';
+      html2 += '<div style="font-size:11px;color:var(--cinza-texto);">' + (c.especialidade||'') + (c.local?' · '+c.local:'') + '</div></div>';
+      html2 += '<button onclick="excluirConsPaciente(' + id + ',' + c.id + ')" style="background:#fee2e2;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:13px;">🗑️</button>';
+      html2 += '</div>';
+    });
+    html2 += '</div>';
+  }
+
+  // Receita foto
+  if (p.receitaImg) {
+    html2 += '<div style="font-size:14px;font-weight:800;color:var(--verde);margin-bottom:8px;">📋 Foto da Receita</div>';
+    html2 += '<img src="' + p.receitaImg + '" style="width:100%;max-height:200px;object-fit:contain;border-radius:10px;margin-bottom:12px;">';
+  }
+
+  // Botão excluir paciente
+  html2 += '<button class="btn-vermelho" onclick="excluirPaciente(' + p.id + ')" style="width:100%;margin-top:8px;">🗑️ Excluir Paciente</button>';
+
+  document.getElementById('verPacienteConteudo').innerHTML = html2;
+}
+
+// Modal remédio do paciente
+function abrirModalRemPaciente(pacId) {
+  pacienteAtualId = pacId;
+  horasSel = []; periodoSel = '';
+  ['mNome','mDose','mObs'].forEach(function(id) { document.getElementById(id).value = ''; });
+  ['manha','tarde','noite'].forEach(function(x) { document.getElementById('periodo'+capitalize(x)).className = 'periodo-box '+x; });
+  document.getElementById('horariosGrid').innerHTML = HORARIOS.map(function(h) { return '<button class="horario-toggle" data-hora="'+h+'" onclick="toggleHorario(this,''+h+'')">'+h+'</button>'; }).join('');
+  // Mudar o salvar para salvar no paciente
+  document.querySelector('#modalRemedio .btn-verde').setAttribute('onclick','salvarRemPaciente()');
+  document.getElementById('modalRemedio').classList.add('aberto');
+}
+
+function salvarRemPaciente() {
+  const id = pacienteAtualId;
+  const nome = document.getElementById('mNome').value.trim();
+  if (!nome) { alert('Digite o nome do remédio!'); return; }
+  if (!horasSel.length && !periodoSel) { alert('Selecione um período ou horário!'); return; }
+  if (!horasSel.length && periodoSel) horasSel = PERIODOS[periodoSel].horas.slice();
+  const remPac = JSON.parse(localStorage.getItem('pv_remedios_pac_' + id) || '[]');
+  remPac.push({id:Date.now(), nome:nome, dose:document.getElementById('mDose').value.trim(), horarios:horasSel.sort(), periodo:periodoSel||periodoDoHorario(horasSel[0]), obs:document.getElementById('mObs').value.trim()});
+  localStorage.setItem('pv_remedios_pac_' + id, JSON.stringify(remPac));
+  fecharModal();
+  // Restaurar botão original
+  document.querySelector('#modalRemedio .btn-verde').setAttribute('onclick','salvarRemedio()');
+  renderVerPaciente(id);
+  mostrarToast('✅ Remédio adicionado!');
+}
+
+function excluirRemPaciente(pacId, remId) {
+  if (!confirm('Excluir este remédio?')) return;
+  let remPac = JSON.parse(localStorage.getItem('pv_remedios_pac_' + pacId) || '[]');
+  remPac = remPac.filter(function(r) { return r.id !== remId; });
+  localStorage.setItem('pv_remedios_pac_' + pacId, JSON.stringify(remPac));
+  renderVerPaciente(pacId);
+  mostrarToast('🗑️ Remédio excluído.');
+}
+
+// Modal consulta do paciente
+function abrirModalConsPaciente(pacId) {
+  pacienteAtualId = pacId;
+  ['cEspecialidade','cLocal','cObs'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('cTipo').value = '';
+  document.getElementById('cHorario').value = '';
+  document.getElementById('cData').value = hoje();
+  if (document.getElementById('alerta2dias')) {
+    document.getElementById('alerta2dias').checked = false;
+    document.getElementById('alerta1dia').checked = false;
+    document.getElementById('alertaNoDia').checked = false;
+  }
+  // Mudar botão salvar para salvar no paciente
+  document.querySelector('#modalConsulta .btn-verde').setAttribute('onclick','salvarConsPaciente()');
+  document.getElementById('modalConsulta').classList.add('aberto');
+}
+
+function salvarConsPaciente() {
+  const id = pacienteAtualId;
+  const tipo = document.getElementById('cTipo').value;
+  const data = document.getElementById('cData').value;
+  if (!tipo) { alert('Selecione o tipo!'); return; }
+  if (!data) { alert('Informe a data!'); return; }
+  const consPac = JSON.parse(localStorage.getItem('pv_consultas_pac_' + id) || '[]');
+  consPac.push({
+    id:Date.now(), tipo:tipo,
+    especialidade:document.getElementById('cEspecialidade').value.trim(),
+    data:data, horario:document.getElementById('cHorario').value,
+    local:document.getElementById('cLocal').value.trim(),
+    obs:document.getElementById('cObs').value.trim()
+  });
+  consPac.sort(function(a,b) { return a.data.localeCompare(b.data); });
+  localStorage.setItem('pv_consultas_pac_' + id, JSON.stringify(consPac));
+  fecharModalConsulta();
+  // Restaurar botão original
+  document.querySelector('#modalConsulta .btn-verde').setAttribute('onclick','salvarConsulta()');
+  renderVerPaciente(id);
+  mostrarToast('✅ Consulta adicionada!');
+}
+
+function excluirConsPaciente(pacId, consId) {
+  if (!confirm('Excluir esta consulta?')) return;
+  let consPac = JSON.parse(localStorage.getItem('pv_consultas_pac_' + pacId) || '[]');
+  consPac = consPac.filter(function(c) { return c.id !== consId; });
+  localStorage.setItem('pv_consultas_pac_' + pacId, JSON.stringify(consPac));
+  renderVerPaciente(pacId);
+  mostrarToast('🗑️ Consulta excluída.');
 }
 function fecharModalVerPaciente() { document.getElementById('modalVerPaciente').classList.remove('aberto'); }
 function excluirPaciente(id) { if (!confirm('Excluir este paciente?')) return; pacientes = pacientes.filter(p => p.id !== id); localStorage.setItem('pv_pacientes', JSON.stringify(pacientes)); fecharModalVerPaciente(); renderPacientes(); }
