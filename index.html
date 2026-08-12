@@ -791,6 +791,89 @@ function atualizarHeader() {
   document.getElementById('badgeHoje').textContent = pend > 0 ? pend + ' pendente' + (pend > 1 ? 's' : '') : '✅ Em dia';
 }
 
+
+function atualizarDashboard() {
+  var perfil2 = JSON.parse(localStorage.getItem('pv_perfil') || 'null');
+  var nome2 = perfil2 ? perfil2.nome.split(' ')[0] : '';
+  var h2 = new Date().getHours();
+  var sauda = h2 < 12 ? 'Bom dia' : h2 < 18 ? 'Boa tarde' : 'Boa noite';
+  var el = document.getElementById('saudacaoInicio');
+  if (el) el.textContent = sauda + (nome2 ? ', ' + nome2 + '!' : '!');
+  var sub = document.getElementById('subtituloInicio');
+  if (sub) sub.textContent = perfil2 ? (perfil2.tipo + ' | PREVITA') : 'Bem-vindo ao PREVITA';
+  var data2 = document.getElementById('dataInicio');
+  var now2 = new Date();
+  var dias2 = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+  var meses2 = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  if (data2) data2.textContent = dias2[now2.getDay()] + ', ' + now2.getDate() + ' ' + meses2[now2.getMonth()];
+
+  var tom2 = 0, pend2 = 0;
+  remedios.forEach(function(r) {
+    (r.horarios||[]).forEach(function(h3) {
+      if (tomadosHoje[r.id+'_'+h3]) tom2++; else pend2++;
+    });
+  });
+  var st = document.getElementById('stTotal'); if (st) st.textContent = remedios.length;
+  var stT = document.getElementById('stTomados'); if (stT) stT.textContent = tom2;
+  var stP = document.getElementById('stPendentes'); if (stP) stP.textContent = pend2;
+
+  var agoraMin = now2.getHours()*60 + now2.getMinutes();
+  var proxList = [];
+  remedios.forEach(function(r) {
+    (r.horarios||[]).forEach(function(h3) {
+      var p2 = h3.split(':').map(Number);
+      if (p2[0]*60+p2[1] > agoraMin) proxList.push({label:h3, rem:r.nome});
+    });
+  });
+  proxList.sort(function(a,b) { return a.label.localeCompare(b.label); });
+  var prx = document.getElementById('proximoRemInicio');
+  if (prx) prx.textContent = proxList.length ? proxList[0].label + ' – ' + proxList[0].rem : 'Tudo em dia!';
+  var bdg = document.getElementById('badgeInicio');
+  if (bdg) bdg.textContent = pend2 > 0 ? pend2 + ' pendente' + (pend2>1?'s':'') : 'Em dia';
+
+  var total3 = tom2 + pend2;
+  var prog = document.getElementById('progrInicio');
+  if (prog) prog.style.width = total3 ? Math.round(tom2/total3*100)+'%' : '0%';
+
+  var agoraStr2 = now2.getHours().toString().padStart(2,'0')+':'+now2.getMinutes().toString().padStart(2,'0');
+  var MESES3 = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var divR = document.getElementById('remediosHojeInicio');
+  if (divR) {
+    if (!remedios.length) {
+      divR.innerHTML = '<p class="vazio" style="padding:10px;">Nenhum remedio cadastrado.</p>';
+    } else {
+      divR.innerHTML = remedios.slice(0,3).map(function(r) {
+        var t2 = (r.horarios||[]).filter(function(h3) { return tomadosHoje[r.id+'_'+h3]; }).length;
+        var tot2 = (r.horarios||[]).length;
+        var pd2 = PERIODOS[r.periodo||'manha'] || PERIODOS.manha;
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--cinza);">' +
+          '<span style="font-size:22px;">'+pd2.icon+'</span>' +
+          '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">'+r.nome+'</div>' +
+          '<div style="font-size:11px;color:'+(t2===tot2&&tot2>0?'#16a34a':'var(--cinza-texto)')+';font-weight:600;">'+(t2===tot2&&tot2>0?'Tomado':''+t2+'/'+tot2)+'</div></div></div>';
+      }).join('') + (remedios.length > 3 ? '<div style="font-size:11px;color:var(--cinza-texto);text-align:center;padding:6px;">+ '+(remedios.length-3)+' mais</div>' : '');
+    }
+  }
+
+  var divC = document.getElementById('proximaConsultaInicio');
+  if (divC) {
+    var hj = hoje();
+    var fut2 = consultas.filter(function(c) { return c.data >= hj; }).sort(function(a,b) { return a.data.localeCompare(b.data); });
+    if (!fut2.length) {
+      divC.innerHTML = '<p class="vazio" style="padding:10px;">Nenhuma consulta cadastrada.</p>';
+    } else {
+      var c2 = fut2[0];
+      var d2 = new Date(c2.data+'T12:00:00');
+      divC.innerHTML = '<div style="display:flex;align-items:center;gap:12px;padding:6px 0;">' +
+        '<div style="background:var(--verde);color:white;border-radius:10px;padding:8px 10px;text-align:center;min-width:48px;flex-shrink:0;">' +
+        '<div style="font-size:20px;font-weight:900;line-height:1;">'+d2.getDate().toString().padStart(2,'0')+'</div>' +
+        '<div style="font-size:10px;font-weight:700;">'+MESES3[d2.getMonth()]+'</div></div>' +
+        '<div><div style="font-size:14px;font-weight:800;">'+c2.tipo+'</div>' +
+        (c2.especialidade?'<div style="font-size:12px;color:var(--cinza-texto);">'+c2.especialidade+'</div>':'') +
+        (c2.local?'<div style="font-size:12px;color:var(--cinza-texto);">'+c2.local+'</div>':'')+'</div></div>';
+    }
+  }
+}
+
 function irPara(tela, btn) {
   document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('ativa'));
