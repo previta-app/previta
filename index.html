@@ -488,6 +488,7 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
       </div>
       <div class="campo"><label>Nome completo</label><input type="text" id="inputNomePerfil" placeholder="Seu nome completo"></div>
       <div class="campo" id="campoMicroarea" style="display:none;"><label>Microárea / Setor</label><input type="text" id="inputMicroarea" placeholder="Ex: Microárea 09"></div>
+      <div class="campo" id="campoUBS" style="display:none;"><label>UBS / Unidade</label><input type="text" id="inputUBS" placeholder="Ex: UBS São Pedro"></div>
       <div class="campo"><label>Cidade / Bairro</label><input type="text" id="inputCidade" placeholder="Ex: Santana de Parnaíba – SP"></div>
       <div class="campo"><label>Telefone (opcional)</label><input type="tel" id="inputTelPerfil" placeholder="(11) 9 9999-9999"></div>
       <button class="btn-verde" onclick="salvarPerfil()">💾 Salvar Perfil</button>
@@ -1655,11 +1656,11 @@ function limparReceita() {
 
 function selecionarTipo(tipo) {
   tipoSelecionado = tipo;
-  document.getElementById('btnTipoACS').className = 'tipo-select-btn' + (tipo === 'ACS' ? ' sel-acs' : '');
-  document.getElementById('btnTipoCuidador').className = 'tipo-select-btn' + (tipo === 'Cuidador' ? ' sel-cuidador' : '');
-  document.getElementById('btnTipoPaciente').className = 'tipo-select-btn' + (tipo === 'Paciente' ? ' sel-paciente' : '');
-  document.getElementById('campoMicroarea').style.display = tipo === 'ACS' ? 'block' : 'none';
-  document.getElementById('campoUBS').style.display = tipo === 'ACS' ? 'block' : 'none';
+  var bACS = document.getElementById('btnTipoACS'); if (bACS) bACS.className = 'tipo-select-btn' + (tipo === 'ACS' ? ' sel-acs' : '');
+  var bCuid = document.getElementById('btnTipoCuidador'); if (bCuid) bCuid.className = 'tipo-select-btn' + (tipo === 'Cuidador' ? ' sel-cuidador' : '');
+  var bPac = document.getElementById('btnTipoPaciente'); if (bPac) bPac.className = 'tipo-select-btn' + (tipo === 'Paciente' ? ' sel-paciente' : '');
+  var cMicro = document.getElementById('campoMicroarea'); if (cMicro) cMicro.style.display = tipo === 'ACS' ? 'block' : 'none';
+  var campoUBSEl = document.getElementById('campoUBS'); if (campoUBSEl) campoUBSEl.style.display = (tipo === 'ACS' || tipo === 'Cuidador') ? 'block' : 'none';
 }
 
 // ===== SISTEMA DE PESSOAS (Família / Pacientes) =====
@@ -1867,7 +1868,7 @@ function excluirPessoa(id) {
 function salvarPerfil() {
   const nome = document.getElementById('inputNomePerfil').value.trim();
   if (!nome) { alert('Digite seu nome!'); return; } if (!tipoSelecionado) { alert('Selecione o tipo!'); return; }
-  perfil = {nome, tipo:tipoSelecionado, microarea:document.getElementById('inputMicroarea').value.trim(), ubs:document.getElementById('inputUBS').value.trim(), cidade:document.getElementById('inputCidade').value.trim(), tel:document.getElementById('inputTelPerfil').value.trim()};
+  perfil = {nome, tipo:tipoSelecionado, microarea:document.getElementById('inputMicroarea').value.trim(), ubs:document.getElementById('inputUBS').value.trim(), cidade:document.getElementById('inputCidade').value.trim(), tel:document.getElementById('inputTelPerfil').value.trim(), ubs: document.getElementById('inputUBS') ? document.getElementById('inputUBS').value.trim() : ''};
   localStorage.setItem('pv_perfil', JSON.stringify(perfil));
   garantirPessoaPrincipal();
   renderPerfil();
@@ -1906,7 +1907,7 @@ function editarPerfil() {
   if (!perfil) return;
   document.getElementById('inputNomePerfil').value = perfil.nome || '';
   document.getElementById('inputMicroarea').value = perfil.microarea || '';
-  document.getElementById('inputUBS').value = perfil.ubs || '';
+  var ubsEl2 = document.getElementById('inputUBS'); if (ubsEl2) ubsEl2.value = perfil.ubs || '';
   document.getElementById('inputCidade').value = perfil.cidade || '';
   document.getElementById('inputTelPerfil').value = perfil.tel || '';
   if (perfil.tipo) selecionarTipo(perfil.tipo);
