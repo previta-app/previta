@@ -320,36 +320,6 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
 </div>
 
 <!-- AGENDA -->
-<div class="tela" id="tela-agenda">
-  <div style="display:flex;gap:8px;margin:14px 0 12px;">
-    <button onclick="mostrarSubAgenda('remedios')" id="subAbaR" style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--verde);color:white;font-weight:800;font-family:Nunito,sans-serif;cursor:pointer;font-size:12px;">💊 Remédios</button>
-    <button onclick="mostrarSubAgenda('consultas')" id="subAbaC" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--verde);background:white;color:var(--verde);font-weight:800;font-family:Nunito,sans-serif;cursor:pointer;font-size:12px;">🏥 Consultas</button>
-  </div>
-  <div id="subAgendaRemedios">
-    <div class="card">
-      <div class="card-titulo">📅 Agenda de Hoje</div>
-      <div id="agendaHoje"><p class="vazio">Sem remédios agendados.</p></div>
-    </div>
-    <div class="card">
-      <div class="card-titulo">📊 Progresso do Dia</div>
-      <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;"><span>Doses tomadas</span><span id="progrTexto">0/0</span></div>
-      <div class="progresso-bar"><div class="progresso-fill" id="progrBar" style="width:0%"></div></div>
-      <p id="progrMsg" style="font-size:12px;color:var(--cinza-texto);text-align:center;font-weight:600;margin-top:4px;"></p>
-    </div>
-    <div class="card">
-      <div class="card-titulo">🔔 Alertas Sonoros</div>
-      <p style="font-size:13px;color:var(--cinza-texto);font-weight:600;margin-bottom:10px;">O app toca uma melodia e vibra na hora do remédio. <strong>Mantenha o app aberto.</strong></p>
-      <button class="btn-laranja" onclick="testarSom()" style="width:100%;">🔔 Testar Som e Vibração</button>
-    </div>
-  </div>
-  <div id="subAgendaConsultas" style="display:none;">
-    <button class="btn-verde" onclick="abrirModalConsulta()" style="margin-bottom:12px;">➕ Inserir Consulta / Exame</button>
-    <div id="listaConsultas"><p class="vazio">Nenhuma consulta cadastrada.</p></div>
-  </div>
-  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="https://previta-app.github.io/previta" style="color:#4ade80;" target="_blank">previta-app.github.io/previta</a><br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
-</div>
-
-<!-- PACIENTES -->
 <div class="tela" id="tela-pacientes">
   <div class="stats-row" style="margin-top:14px;">
     <div class="stat-box"><div class="stat-num" id="totalPacientes">0</div><div class="stat-label">Pacientes</div></div>
@@ -374,6 +344,208 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
   <div class="rodape" style="margin-top:12px;"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="https://previta-app.github.io/previta" style="color:#4ade80;">previta-app.github.io/previta</a><br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
 </div>
 
+
+
+<!-- AGENDA -->
+<div class="tela" id="tela-agenda">
+  <div style="display:flex;gap:8px;margin:14px 0 12px;">
+    <button onclick="mostrarSubAgenda('remedios')" id="subAbaR" style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--verde);color:white;font-weight:800;font-family:Nunito,sans-serif;cursor:pointer;font-size:12px;">💊 Remédios</button>
+    <button onclick="mostrarSubAgenda('consultas')" id="subAbaC" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--verde);background:white;color:var(--verde);font-weight:800;font-family:Nunito,sans-serif;cursor:pointer;font-size:12px;">🏥 Consultas</button>
+  </div>
+  <div id="subAgendaRemedios">
+    <div class="card"><div class="card-titulo">📅 Agenda de Hoje</div><div id="agendaHoje"><p class="vazio">Sem remédios agendados.</p></div></div>
+    <div class="card">
+      <div class="card-titulo">📊 Progresso do Dia</div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;"><span>Doses tomadas</span><span id="progrTexto">0/0</span></div>
+      <div class="progresso-bar"><div class="progresso-fill" id="progrBar" style="width:0%"></div></div>
+      <p id="progrMsg" style="font-size:12px;color:var(--cinza-texto);text-align:center;font-weight:600;margin-top:4px;"></p>
+    </div>
+    <div class="card">
+      <div class="card-titulo">🔔 Alertas Sonoros</div>
+      <p style="font-size:13px;color:var(--cinza-texto);font-weight:600;margin-bottom:10px;">O app toca uma melodia e vibra na hora do remédio. <strong>Mantenha o app aberto.</strong></p>
+      <button class="btn-laranja" onclick="testarSom()" style="width:100%;">🔔 Testar Som e Vibração</button>
+    </div>
+  </div>
+  <div id="subAgendaConsultas" style="display:none;">
+    <button class="btn-verde" onclick="abrirModalConsulta()" style="margin-bottom:12px;">➕ Inserir Consulta / Exame</button>
+    <div id="listaConsultas"><p class="vazio">Nenhuma consulta cadastrada.</p></div>
+  </div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="https://previta-app.github.io/previta" style="color:#4ade80;">previta-app.github.io/previta</a><br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
+</div>
+
+<!-- RECEITA -->
+<div class="tela" id="tela-receita">
+  <div class="card" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:white;border:none;margin-top:14px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><div style="font-size:28px;">🏥</div><div><div style="font-size:14px;font-weight:900;">Importar Receita Médica</div></div></div>
+    <div style="font-size:11px;opacity:0.85;font-weight:600;">Fotografe sua receita — o app lê e cadastra os remédios automaticamente!</div>
+  </div>
+  <div class="card">
+    <div class="card-titulo">📷 Fotografar Receita</div>
+    <div style="font-size:12px;color:var(--cinza-texto);font-weight:600;margin-bottom:10px;">Funciona melhor com receitas digitadas/impressas. Receitas manuscritas: a IA tenta identificar os remédios.</div>
+    <input type="file" id="receitaFotoInput" accept="image/*" capture="environment" style="display:none" onchange="previewReceitaFoto(this)">
+    <button class="btn-verde" onclick="document.getElementById('receitaFotoInput').click()" style="margin-bottom:8px;">📷 Abrir Câmera / Galeria</button>
+    <img id="receitaFotoPreview" style="display:none;width:100%;border-radius:10px;margin-top:8px;" alt="Receita">
+    <div id="receitaFotoStatus" style="display:none;text-align:center;padding:12px;font-size:13px;font-weight:700;border-radius:10px;margin-top:8px;"></div>
+    <div id="ocrProgressWrap" style="display:none;margin-top:8px;"><div style="height:8px;background:var(--cinza);border-radius:10px;overflow:hidden;"><div id="ocrProgressBar" style="height:100%;background:var(--verde);width:0%;transition:width 0.2s;"></div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-titulo">⌨️ Digite ou Cole os Remédios</div>
+    <div class="campo"><textarea id="receitaTextoInput" rows="5" placeholder="Losartana Potássica 50mg&#10;Sinvastatina 20mg" style="width:100%;padding:11px;border:2px solid #e5e7eb;border-radius:10px;font-size:13px;font-family:Nunito,sans-serif;font-weight:600;resize:vertical;"></textarea></div>
+    <button class="btn-verde" onclick="processarReceitaTexto()">➕ Adicionar aos Meus Remédios</button>
+  </div>
+  <div class="card" id="receitaResultadoCard" style="display:none;">
+    <div class="card-titulo">✅ Remédios Identificados</div>
+    <div id="receitaResultadoLista"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="btn-verde" onclick="importarReceitaSelecionados()" style="flex:2;">➕ Importar Selecionados</button>
+      <button style="flex:1;background:var(--cinza);color:var(--cinza-texto);border:none;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;" onclick="limparReceita()">🗑️ Limpar</button>
+    </div>
+  </div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="https://previta-app.github.io/previta" style="color:#4ade80;">previta-app.github.io/previta</a><br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
+</div>
+
+<!-- DICAS -->
+<div class="tela" id="tela-dicas">
+  <div style="margin-top:14px;">
+    <div class="dica-filtros">
+      <button class="dica-filtro ativo" onclick="filtrarDicas('todos',this)">Todas</button>
+      <button class="dica-filtro" onclick="filtrarDicas('medicamento',this)">💊 Remédios</button>
+      <button class="dica-filtro" onclick="filtrarDicas('alimentacao',this)">🥗 Alimentação</button>
+      <button class="dica-filtro" onclick="filtrarDicas('pressao',this)">❤️ Pressão</button>
+      <button class="dica-filtro" onclick="filtrarDicas('diabetes',this)">🩸 Diabetes</button>
+      <button class="dica-filtro" onclick="filtrarDicas('exercicio',this)">🏃 Exercício</button>
+      <button class="dica-filtro" onclick="filtrarDicas('sono',this)">😴 Sono</button>
+      <button class="dica-filtro" onclick="filtrarDicas('coracao',this)">🫀 Coração</button>
+      <button class="dica-filtro" onclick="filtrarDicas('rins',this)">💧 Rins</button>
+      <button class="dica-filtro" onclick="filtrarDicas('respiracao',this)">🫁 Respiração</button>
+      <button class="dica-filtro" onclick="filtrarDicas('mulher',this)">👩 Saúde da Mulher</button>
+      <button class="dica-filtro" onclick="filtrarDicas('homem',this)">👨 Saúde do Homem</button>
+      <button class="dica-filtro" onclick="filtrarDicas('pele',this)">☀️ Pele</button>
+      <button class="dica-filtro" onclick="filtrarDicas('bucal',this)">🦷 Bucal</button>
+    </div>
+    <div id="listaDicas"></div>
+  </div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="https://previta-app.github.io/previta" style="color:#4ade80;">previta-app.github.io/previta</a><br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
+</div>
+
+<!-- GUIA -->
+<div class="tela" id="tela-guia">
+  <div style="margin-top:14px;">
+    <div class="card" style="text-align:center;padding:16px;background:linear-gradient(135deg,var(--verde),#145c38);color:white;">
+      <div style="font-size:36px;margin-bottom:6px;">📖</div>
+      <h2 style="font-size:17px;font-weight:900;">Guia de Cuidados de Saúde</h2>
+      <p style="font-size:12px;opacity:0.85;margin-top:4px;">Toque em um tema para abrir as informações</p>
+    </div>
+    <div id="listaGuia"></div>
+  </div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="https://previta-app.github.io/previta" style="color:#4ade80;">previta-app.github.io/previta</a><br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
+</div>
+
+<!-- ASSISTENTE PREV -->
+<div class="tela" id="tela-ia">
+  <div class="card" style="margin-top:14px;">
+    <div class="card-titulo">🤖 PREV – Assistente de Saúde</div>
+    <div style="background:#e8f5ee;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:13px;font-weight:600;color:#145c38;">
+      📴 <strong>Offline:</strong> Respondo na hora, sem internet.<br>🌐 <strong>Online:</strong> Pesquisa mais detalhada via IA.
+    </div>
+    <div class="ia-chat" id="iaChat">
+      <div class="msg ia"><div class="msg-bubble">Olá! 👋 Sou o PREV.<br><br>Digite o nome do remédio ou sua dúvida sobre saúde. Respondo offline na hora ou posso pesquisar online! 😊</div></div>
+    </div>
+    <div class="ia-input-row">
+      <input class="ia-input" id="iaInput" placeholder="Digite o remédio ou dúvida...">
+      <button class="btn-enviar" onclick="enviarIA()">➤</button>
+    </div>
+    <button id="btnPesquisarOnline" onclick="pesquisarOnline()" style="display:none;width:100%;margin-top:8px;padding:14px;background:#e0f2fe;color:#0369a1;border:2px solid #0369a1;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">🌐 Pesquisar mais informações online</button>
+  </div>
+  <div class="card">
+    <div class="card-titulo">💡 Perguntas rápidas</div>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <button class="btn-laranja" style="width:100%;text-align:left;padding:10px 14px;" onclick="perguntaRapida('Para que serve a Metformina?')">💊 Para que serve a Metformina?</button>
+      <button class="btn-laranja" style="width:100%;text-align:left;padding:10px 14px;" onclick="perguntaRapida('Losartana com Aspirina tem problema?')">⚠️ Losartana com Aspirina?</button>
+      <button class="btn-laranja" style="width:100%;text-align:left;padding:10px 14px;" onclick="perguntaRapida('Qual o melhor horário para tomar remédio de pressão?')">⏰ Horário do remédio de pressão?</button>
+      <button class="btn-laranja" style="width:100%;text-align:left;padding:10px 14px;" onclick="perguntaRapida('Esqueci de tomar o remédio, e agora?')">❓ Esqueci de tomar, e agora?</button>
+      <button class="btn-laranja" style="width:100%;text-align:left;padding:10px 14px;" onclick="perguntaRapida('Para que serve a Levotiroxina?')">💊 Para que serve a Levotiroxina?</button>
+      <button class="btn-laranja" style="width:100%;text-align:left;padding:10px 14px;" onclick="perguntaRapida('Doril para que serve?')">💊 Doril para que serve?</button>
+    </div>
+  </div>
+  <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="https://previta-app.github.io/previta" style="color:#4ade80;">previta-app.github.io/previta</a><br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
+</div>
+
+<!-- USUÁRIO -->
+<div class="tela" id="tela-usuario">
+  <div id="painelSemPerfil" style="margin-top:14px;">
+    <div class="card" style="text-align:center;">
+      <div class="perfil-avatar">👤</div>
+      <h3 style="font-size:17px;font-weight:900;margin-bottom:5px;">Configurar Perfil</h3>
+      <p style="font-size:12px;color:var(--cinza-texto);font-weight:600;">Identifique-se para personalizar o app</p>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Tipo de Usuário</div>
+      <div class="tipo-select-grid">
+        <button class="tipo-select-btn" id="btnTipoACS" onclick="selecionarTipo('ACS')"><span class="tipo-icon">🏥</span>ACS</button>
+        <button class="tipo-select-btn" id="btnTipoCuidador" onclick="selecionarTipo('Cuidador')"><span class="tipo-icon">🤝</span>Cuidador</button>
+        <button class="tipo-select-btn" id="btnTipoPaciente" onclick="selecionarTipo('Paciente')"><span class="tipo-icon">💊</span>Paciente</button>
+      </div>
+      <div class="campo"><label>Nome completo</label><input type="text" id="inputNomePerfil" placeholder="Seu nome completo"></div>
+      <div class="campo" id="campoMicroarea" style="display:none;"><label>Microárea / Setor</label><input type="text" id="inputMicroarea" placeholder="Ex: Microárea 09"></div>
+      <div class="campo"><label>Cidade / Bairro</label><input type="text" id="inputCidade" placeholder="Ex: Santana de Parnaíba – SP"></div>
+      <div class="campo"><label>Telefone (opcional)</label><input type="tel" id="inputTelPerfil" placeholder="(11) 9 9999-9999"></div>
+      <button class="btn-verde" onclick="salvarPerfil()">💾 Salvar Perfil</button>
+    </div>
+    <div class="rodape"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="https://previta-app.github.io/previta" style="color:#4ade80;">previta-app.github.io/previta</a><br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
+  </div>
+  <div id="painelComPerfil" style="display:none;margin-top:14px;">
+    <div class="card" style="text-align:center;">
+      <div class="perfil-avatar" id="avatarPerfil">👤</div>
+      <h3 style="font-size:19px;font-weight:900;" id="nomePerfil">—</h3>
+      <div style="margin-top:6px;" id="tipoBadgePerfil"></div>
+    </div>
+    <div id="submenuACS" style="display:none;">
+      <div class="card-titulo" style="padding:4px 0 10px;">📋 Menu do Agente</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <button onclick="mostrarTelaInterna('remedios')" style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">💊</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:4px;">Remédios</div>
+        </button>
+        <button onclick="mostrarTelaInterna('pacientes')" style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">👥</div><div style="font-size:12px;font-weight:800;color:#3b82f6;margin-top:4px;">Pacientes</div>
+        </button>
+        <button onclick="mostrarTelaInterna('membros')" style="background:var(--laranja-claro);border:2px solid var(--laranja);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">📞</div><div style="font-size:12px;font-weight:800;color:var(--laranja);margin-top:4px;">Contatos</div>
+        </button>
+        <button onclick="irPara('agenda',document.querySelectorAll('.tab-btn')[1])" style="background:#ede9fe;border:2px solid #7c3aed;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">📅</div><div style="font-size:12px;font-weight:800;color:#7c3aed;margin-top:4px;">Consultas</div>
+        </button>
+      </div>
+      <div style="margin-bottom:12px;"><div class="card-titulo" style="padding:4px 0 8px;">👨‍👩‍👧 Pacientes / Família</div><div id="listaPessoasACS"></div></div>
+    </div>
+    <div id="submenuPaciente" style="display:none;">
+      <div class="card-titulo" style="padding:4px 0 10px;">📋 Meu Menu</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <button onclick="mostrarTelaInterna('remedios')" style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">💊</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:4px;">Remédios</div>
+        </button>
+        <button onclick="irPara('agenda',document.querySelectorAll('.tab-btn')[1])" style="background:var(--laranja-claro);border:2px solid var(--laranja);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">📅</div><div style="font-size:12px;font-weight:800;color:var(--laranja);margin-top:4px;">Consultas</div>
+        </button>
+        <button onclick="mostrarTelaInterna('membros')" style="background:var(--laranja-claro);border:2px solid var(--laranja);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">📞</div><div style="font-size:12px;font-weight:800;color:var(--laranja);margin-top:4px;">Contatos</div>
+        </button>
+        <button onclick="irPara('receita',document.querySelectorAll('.tab-btn')[2])" style="background:#ede9fe;border:2px solid #7c3aed;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;font-family:Nunito,sans-serif;">
+          <div style="font-size:28px;">📋</div><div style="font-size:12px;font-weight:800;color:#7c3aed;margin-top:4px;">Receita</div>
+        </button>
+      </div>
+      <div style="margin-bottom:12px;"><div class="card-titulo" style="padding:4px 0 8px;">👨‍👩‍👧 Minha Família</div><div id="listaPessoasPac"></div></div>
+    </div>
+    <div class="card" style="margin-top:8px;">
+      <div class="card-titulo">📋 Perfil</div>
+      <div id="infosPerfilLista"></div>
+    </div>
+    <button class="btn-verde" onclick="editarPerfil()">✏️ Editar Perfil</button>
+    <div style="height:8px;"></div>
+    <button class="btn-vermelho" onclick="instalarPWA()" style="width:100%;">📲 Instalar na Tela Inicial</button>
+    <div class="rodape" style="margin-top:12px;"><strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br><a href="https://previta-app.github.io/previta" style="color:#4ade80;">previta-app.github.io/previta</a><br><a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a></div>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav class="nav-tabs">
@@ -789,7 +961,7 @@ function mostrarTelaInterna(tela) {
   const abaAtiva = document.querySelector('.tab-btn.ativa');
   telaAnterior = abaAtiva ? abaAtiva.getAttribute('onclick').replace("irPara('","").split("'")[0] : 'inicio';
   document.querySelectorAll('.tela').forEach(function(t) { t.classList.remove('ativa'); });
-  document.getElementById('tela-' + tela).classList.add('ativa');
+  var telaEl = document.getElementById('tela-' + tela); if (!telaEl) return; telaEl.classList.add('ativa');
   if (tela === 'membros') renderContatos();
   if (tela === 'remedios') { renderRemedios(); }
   if (tela === 'pacientes') { renderPacientes(); }
@@ -805,7 +977,7 @@ function voltarTelaInterna() {
 function irPara(tela, btn) {
   document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('ativa'));
-  document.getElementById('tela-' + tela).classList.add('ativa');
+  var telaEl = document.getElementById('tela-' + tela); if (!telaEl) return; telaEl.classList.add('ativa');
   if (btn) btn.classList.add('ativa');
   if (tela === 'inicio') { atualizarDashboard(); }
   if (tela === 'agenda') { renderAgenda(); renderConsultas(); }
@@ -1316,7 +1488,7 @@ function adicionarMsgChat(tipo, html) {
   chat.appendChild(div); chat.scrollTop = chat.scrollHeight;
 }
 
-document.getElementById('iaInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') enviarIA(); });
+var iaInputEl = document.getElementById('iaInput'); if (iaInputEl) iaInputEl.addEventListener('keypress', function(e) { if (e.key === 'Enter') enviarIA(); });
 
 function enviarIA() {
   const input = document.getElementById('iaInput'), msg = input.value.trim(); if (!msg) return;
