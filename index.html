@@ -1661,17 +1661,40 @@ function renderReceitaResultado() {
   document.getElementById('receitaResultadoCard').style.display = 'block';
 }
 function importarReceitaSelecionados() {
-  let imp = 0;
+  var pessoaId = document.getElementById('receitaPessoaId') ? document.getElementById('receitaPessoaId').value : '';
+  if (!pessoaId) { alert('Selecione para quem sao estes remedios!'); return; }
+  var imp = 0;
+  var pessoas2 = typeof getPessoas === 'function' ? getPessoas() : [];
+  var pessoaSel = pessoas2.find(function(p) { return String(p.id) === String(pessoaId); });
+  var isPrincipal = pessoaSel && pessoaSel.principal;
+  var isGeral = pessoaId === 'geral';
+
   receitaProcessadaFinal.forEach(function(r, i) {
-    const cb = document.getElementById('recSel_' + i);
-    if (cb && cb.checked && !remedios.find(x => x.nome.toLowerCase() === r.nome.toLowerCase().substring(0, 20))) {
-      remedios.push({id: Date.now()+i, nome: r.nome, dose: r.dose, horarios: r.horarios, periodo: r.periodo, obs: r.obs}); imp++;
+    var cb = document.getElementById('recSel_' + i);
+    if (!cb || !cb.checked) return;
+    var novoRem = {id: Date.now()+i, nome: r.nome, dose: r.dose, horarios: r.horarios, periodo: r.periodo, obs: r.obs};
+    if (isGeral || isPrincipal) {
+      if (!remedios.find(function(x) { return x.nome.toLowerCase() === r.nome.toLowerCase().substring(0,20); })) {
+        remedios.push(novoRem); imp++;
+      }
+    }
+    if (!isGeral && pessoaId) {
+      var remPes = JSON.parse(localStorage.getItem('pv_remedios_pac_' + pessoaId) || '[]');
+      remPes.push(novoRem);
+      localStorage.setItem('pv_remedios_pac_' + pessoaId, JSON.stringify(remPes));
+      if (!isPrincipal) imp++;
     }
   });
-  localStorage.setItem('pv_remedios', JSON.stringify(remedios));
-  renderRemedios(); atualizarHeader();
-  mostrarToast('✅ ' + imp + ' remédio' + (imp !== 1 ? 's' : '') + ' adicionado' + (imp !== 1 ? 's' : '') + '!');
-  limparReceita(); irPara('remedios', document.querySelectorAll('.tab-btn')[0]);
+
+  if (isGeral || isPrincipal) {
+    localStorage.setItem('pv_remedios', JSON.stringify(remedios));
+    renderRemedios();
+  }
+  atualizarHeader();
+  var nomePes = pessoaSel ? ' para ' + pessoaSel.nome.split(' ')[0] : '';
+  mostrarToast('Adicionado' + nomePes + ': ' + imp + ' remedio(s)!');
+  limparReceita();
+  irPara('inicio', document.querySelectorAll('.tab-btn')[0]);
 }
 function limparReceita() {
   receitaProcessadaFinal = [];
@@ -2039,6 +2062,34 @@ function verificarBoasVindas() {
   if (!localStorage.getItem('pv_bv_visto')) {
     document.getElementById('modalBoasVindas').style.display='flex';
   }
+}
+
+
+// ===== COMPARTILHAR WHATSAPP =====
+function compartilharWhatsApp(pessoaId) {
+  var lista = [];
+  var nomeP = 'Minha lista';
+  if (pessoaId) {
+    lista = JSON.parse(localStorage.getItem('pv_remedios_pac_' + pessoaId) || '[]');
+    var ps = getPessoas().find(function(p) { return String(p.id) === String(pessoaId); });
+    if (ps) nomeP = ps.nome;
+  } else {
+    lista = remedios;
+    nomeP = perfil ? perfil.nome : 'Minha lista';
+  }
+  var msg = '*PREVITA – Remédios*\n*' + nomeP + '*\n' + new Date().toLocaleDateString('pt-BR') + '\n\n';
+  if (!lista.length) {
+    msg += 'Nenhum remédio cadastrado.';
+  } else {
+    lista.forEach(function(r, i) {
+      msg += (i+1) + '. *' + r.nome + '*';
+      if (r.dose) msg += ' – ' + r.dose;
+      if (r.horarios && r.horarios.length) msg += ' (' + r.horarios.join(', ') + ')';
+      msg += '\n';
+    });
+  }
+  msg += '\n_Gerado pelo PREVITA_\nprevita-app.github.io/previta';
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
 atualizarHeader();
