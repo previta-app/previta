@@ -388,6 +388,14 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
     <div id="receitaFotoStatus" style="display:none;text-align:center;padding:12px;font-size:13px;font-weight:700;border-radius:10px;margin-top:8px;"></div>
     <div id="ocrProgressWrap" style="display:none;margin-top:8px;"><div style="height:8px;background:var(--cinza);border-radius:10px;overflow:hidden;"><div id="ocrProgressBar" style="height:100%;background:var(--verde);width:0%;transition:width 0.2s;"></div></div></div>
   </div>
+  <div class="card" id="cardSelecionarPessoa">
+    <div class="card-titulo">👤 Para quem é esta receita?</div>
+    <select id="receitaPessoaId" style="width:100%;padding:14px;border:2px solid var(--verde);border-radius:12px;font-size:15px;font-family:Nunito,sans-serif;font-weight:700;color:var(--texto);background:white;margin-bottom:4px;">
+      <option value="">Selecionar pessoa...</option>
+    </select>
+    <div style="font-size:11px;color:var(--cinza-texto);font-weight:600;margin-top:6px;">💡 Os remédios serão salvos no cadastro desta pessoa</div>
+  </div>
+
   <div class="card">
     <div class="card-titulo">⌨️ Digite ou Cole os Remédios</div>
     <div class="campo"><textarea id="receitaTextoInput" rows="5" placeholder="Losartana Potássica 50mg&#10;Sinvastatina 20mg" style="width:100%;padding:11px;border:2px solid #e5e7eb;border-radius:10px;font-size:13px;font-family:Nunito,sans-serif;font-weight:600;resize:vertical;"></textarea></div>
@@ -975,12 +983,33 @@ function voltarTelaInterna() {
   if (dest === 'usuario') renderPerfil();
 }
 
+
+function preencherSelectPessoas() {
+  var sel = document.getElementById('receitaPessoaId');
+  if (!sel) return;
+  var pessoas = getPessoas();
+  sel.innerHTML = '<option value="">Selecionar pessoa...</option>';
+  if (!pessoas.length) {
+    // Se não há pessoas, usar o perfil principal
+    var nomePerfil3 = perfil ? perfil.nome : 'Meus remédios (geral)';
+    sel.innerHTML += '<option value="geral">' + nomePerfil3 + ' (você)</option>';
+  } else {
+    pessoas.forEach(function(p) {
+      sel.innerHTML += '<option value="' + p.id + '">' + p.nome + (p.principal ? ' ⭐' : '') + (p.relacao ? ' – ' + p.relacao : '') + '</option>';
+    });
+  }
+  // Selecionar automaticamente o principal
+  var principal = pessoas.find(function(p) { return p.principal; });
+  if (principal) sel.value = principal.id;
+}
+
 function irPara(tela, btn) {
   document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('ativa'));
   var telaEl = document.getElementById('tela-' + tela); if (!telaEl) return; telaEl.classList.add('ativa');
   if (btn) btn.classList.add('ativa');
   if (tela === 'inicio') { atualizarDashboard(); }
+  if (tela === 'receita') { preencherSelectPessoas(); }
   if (tela === 'agenda') { renderAgenda(); renderConsultas(); }
   if (tela === 'membros') { renderContatos(); }
   if (tela === 'dicas') renderDicas('todos');
