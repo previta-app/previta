@@ -1762,15 +1762,22 @@ function renderListaPessoas(containerId) {
 
 
 function abrirModalEditarPessoa(id) {
-  const pessoas = getPessoas();
-  const p = pessoas.find(function(x) { return String(x.id) === String(id); });
-  if (!p) return;
+  var pessoas2 = getPessoas();
+  var p2 = pessoas2.find(function(x) { return String(x.id) === String(id); });
+  if (!p2) return;
   pessoaAtualId = id;
-  document.getElementById('epNome').value = p.nome || '';
-  document.getElementById('epRelacao').value = p.relacao || '';
-  document.getElementById('epNascimento').value = p.nascimento || '';
-  document.getElementById('epTel').value = p.tel || '';
-  document.getElementById('epCondicao').value = p.condicao || '';
+  document.getElementById('epNome').value = p2.nome || '';
+  document.getElementById('epNascimento').value = p2.nascimento || '';
+  document.getElementById('epTel').value = p2.tel || '';
+  document.getElementById('epCondicao').value = p2.condicao || '';
+  var campoRel2 = document.getElementById('epRelacao');
+  if (campoRel2) {
+    campoRel2.value = p2.relacao || '';
+    var wrap2 = campoRel2.parentElement;
+    if (wrap2) wrap2.style.display = p2.principal ? 'none' : 'block';
+  }
+  var titulo2 = document.querySelector('#modalEditarPessoa h2');
+  if (titulo2) titulo2.textContent = p2.principal ? '✏️ Editar Meu Cadastro' : '✏️ Editar Cadastro';
   document.getElementById('modalEditarPessoa').classList.add('aberto');
 }
 function fecharModalEditarPessoa() { document.getElementById('modalEditarPessoa').classList.remove('aberto'); }
@@ -1839,68 +1846,90 @@ function verPessoa(id) {
 function fecharModalVerPessoa() { document.getElementById('modalVerPessoa').classList.remove('aberto'); }
 
 function renderVerPessoa(id) {
-  const pessoas = getPessoas();
-  const p = pessoas.find(function(x) { return String(x.id)===String(id); });
+  var pessoas = getPessoas();
+  var p = pessoas.find(function(x) { return String(x.id) === String(id); });
   if (!p) return;
-  const remPac = JSON.parse(localStorage.getItem('pv_remedios_pac_'+id)||'[]');
-  const consPac = JSON.parse(localStorage.getItem('pv_consultas_pac_'+id)||'[]');
-  const hoje2 = new Date().toISOString().split('T')[0];
-  const MESES2 = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var remPac = JSON.parse(localStorage.getItem('pv_remedios_pac_' + id) || '[]');
+  var consPac = JSON.parse(localStorage.getItem('pv_consultas_pac_' + id) || '[]');
+  var hoje2 = new Date().toISOString().split('T')[0];
+  var MESES2 = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
-  let h = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">';
-  h += '<div style="width:54px;height:54px;border-radius:50%;background:' + (p.principal?'var(--verde)':'#e0f2fe') + ';display:flex;align-items:center;justify-content:center;font-size:26px;">' + (p.principal?'⭐':'👤') + '</div>';
-  h += '<div><div style="font-size:18px;font-weight:900;">' + p.nome + '</div>';
-  h += '<div style="font-size:12px;color:var(--cinza-texto);font-weight:600;">' + (p.relacao||'') + (p.idade?' · '+p.idade:'') + (p.condicao?' · '+p.condicao:'') + '</div>';
-  if (p.nascimento) { const dn=new Date(p.nascimento+'T12:00:00'); h += '<div style="font-size:12px;color:var(--cinza-texto);">🎂 ' + dn.toLocaleDateString("pt-BR") + '</div>'; }
-  if (p.tel) h += '<div style="font-size:12px;color:var(--verde);font-weight:700;">📱 ' + p.tel + '</div>';
+  // CABEÇALHO DA PESSOA
+  var h = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--cinza);">';
+  h += '<div style="width:58px;height:58px;border-radius:50%;background:' + (p.principal ? 'var(--verde)' : '#e0f2fe') + ';display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;border:3px solid ' + (p.principal ? '#0d4f2e' : '#bae6fd') + ';">' + (p.principal ? '⭐' : '👤') + '</div>';
+  h += '<div style="flex:1;">';
+  h += '<div style="font-size:18px;font-weight:900;">' + p.nome + (p.principal ? ' <span style="font-size:11px;background:var(--verde);color:white;border-radius:6px;padding:2px 8px;">Responsável</span>' : '') + '</div>';
+  if (p.relacao) h += '<div style="font-size:12px;color:var(--verde);font-weight:700;margin-top:2px;">' + p.relacao + '</div>';
+  if (p.condicao) h += '<div style="font-size:12px;color:var(--cinza-texto);font-weight:600;margin-top:2px;">🏥 ' + p.condicao + '</div>';
+  if (p.nascimento) {
+    var dn = new Date(p.nascimento + 'T12:00:00');
+    var idade2 = Math.floor((new Date() - dn) / (365.25*24*3600*1000));
+    h += '<div style="font-size:12px;color:var(--cinza-texto);font-weight:600;">🎂 ' + dn.toLocaleDateString("pt-BR") + ' (' + idade2 + ' anos)</div>';
+  }
+  if (p.tel) h += '<div style="font-size:12px;font-weight:700;margin-top:3px;"><a href="tel:' + p.tel + '" style="color:#2563eb;">📱 ' + p.tel + '</a></div>';
   h += '</div></div>';
 
-  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">';
-  h += '<div style="font-size:14px;font-weight:800;color:var(--verde);">💊 Remédios (' + remPac.length + ')</div>';
-  h += '<button onclick="abrirModalRemPaciente(\"'+id+'\")" style="background:var(--verde);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">➕</button>';
+  // REMÉDIOS
+  h += '<div style="background:var(--verde-claro);border-radius:12px;padding:12px;margin-bottom:12px;">';
+  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">';
+  h += '<div style="font-size:14px;font-weight:900;color:var(--verde);">💊 Remédios (' + remPac.length + ')</div>';
+  h += '<button onclick="abrirModalRemPaciente(\"' + id + '\")" style="background:var(--verde);color:white;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">➕ Adicionar</button>';
   h += '</div>';
   if (!remPac.length) {
-    h += '<div style="text-align:center;padding:10px;color:var(--cinza-texto);font-size:12px;background:var(--cinza);border-radius:10px;margin-bottom:12px;">Nenhum remédio</div>';
+    h += '<div style="text-align:center;padding:12px;color:var(--cinza-texto);font-size:13px;font-weight:600;">Nenhum remédio cadastrado</div>';
   } else {
-    h += '<div style="margin-bottom:12px;">';
     remPac.forEach(function(r) {
-      h += '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--verde-claro);border-radius:10px;margin-bottom:6px;">';
-      h += '<span style="font-size:18px;">💊</span><div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + r.nome + '</div>';
-      h += '<div style="font-size:11px;color:var(--cinza-texto);">' + (r.dose||'') + (r.horarios?' · '+r.horarios.join(', '):'') + '</div></div>';
-      h += '<button onclick="excluirRemPaciente(\"'+id+'\",'+r.id+')" style="background:#fee2e2;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;">🗑️</button>';
+      var pd2 = PERIODOS[r.periodo || 'manha'] || PERIODOS.manha;
+      h += '<div style="display:flex;align-items:center;gap:8px;padding:9px;background:white;border-radius:10px;margin-bottom:6px;">';
+      h += '<span style="font-size:22px;">' + pd2.icon + '</span>';
+      h += '<div style="flex:1;">';
+      h += '<div style="font-size:14px;font-weight:800;">' + r.nome + '</div>';
+      h += '<div style="font-size:11px;color:var(--cinza-texto);">' + (r.dose || '') + (r.horarios && r.horarios.length ? ' · ' + r.horarios.join(', ') : '') + '</div>';
+      h += '</div>';
+      h += '<button onclick="excluirRemPaciente(\"' + id + '\",' + r.id + ')" style="background:#fee2e2;border:none;border-radius:6px;width:30px;height:30px;cursor:pointer;font-size:14px;">🗑️</button>';
       h += '</div>';
     });
-    h += '</div>';
   }
+  h += '</div>';
 
-  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">';
-  h += '<div style="font-size:14px;font-weight:800;color:var(--verde);">📅 Consultas (' + consPac.length + ')</div>';
-  h += '<button onclick="abrirModalConsPaciente(\"'+id+'\")" style="background:var(--laranja);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">➕</button>';
+  // CONSULTAS
+  h += '<div style="background:#fff3e8;border-radius:12px;padding:12px;margin-bottom:12px;">';
+  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">';
+  h += '<div style="font-size:14px;font-weight:900;color:var(--laranja);">📅 Consultas (' + consPac.length + ')</div>';
+  h += '<button onclick="abrirModalConsPaciente(\"' + id + '\")" style="background:var(--laranja);color:white;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">➕ Adicionar</button>';
   h += '</div>';
   if (!consPac.length) {
-    h += '<div style="text-align:center;padding:10px;color:var(--cinza-texto);font-size:12px;background:var(--cinza);border-radius:10px;margin-bottom:12px;">Nenhuma consulta</div>';
+    h += '<div style="text-align:center;padding:12px;color:var(--cinza-texto);font-size:13px;font-weight:600;">Nenhuma consulta cadastrada</div>';
   } else {
-    h += '<div style="margin-bottom:12px;">';
     consPac.forEach(function(c) {
-      const d = new Date(c.data+'T12:00:00');
-      const passada = c.data < hoje2;
-      h += '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:' + (passada?'#f3f4f6':'#e0f2fe') + ';border-radius:10px;margin-bottom:6px;">';
-      h += '<div style="background:var(--verde);color:white;border-radius:8px;padding:4px 8px;text-align:center;min-width:38px;flex-shrink:0;"><div style="font-size:15px;font-weight:900;line-height:1;">' + d.getDate().toString().padStart(2,'0') + '</div><div style="font-size:9px;font-weight:700;">' + MESES2[d.getMonth()] + '</div></div>';
-      h += '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + c.tipo + '</div>';
-      h += '<div style="font-size:11px;color:var(--cinza-texto);">' + (c.especialidade||'') + (c.local?' · '+c.local:'') + '</div></div>';
-      h += '<button onclick="excluirConsPaciente(\"'+id+'\",'+c.id+')" style="background:#fee2e2;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;">🗑️</button>';
+      var d2 = new Date(c.data + 'T12:00:00');
+      var passada = c.data < hoje2;
+      h += '<div style="display:flex;align-items:center;gap:10px;padding:9px;background:white;border-radius:10px;margin-bottom:6px;">';
+      h += '<div style="background:' + (passada ? '#9ca3af' : 'var(--laranja)') + ';color:white;border-radius:8px;padding:5px 8px;text-align:center;min-width:42px;flex-shrink:0;">';
+      h += '<div style="font-size:16px;font-weight:900;line-height:1;">' + d2.getDate().toString().padStart(2,'0') + '</div>';
+      h += '<div style="font-size:9px;font-weight:700;">' + MESES2[d2.getMonth()] + '</div></div>';
+      h += '<div style="flex:1;">';
+      h += '<div style="font-size:13px;font-weight:800;">' + c.tipo + '</div>';
+      h += '<div style="font-size:11px;color:var(--cinza-texto);">' + (c.especialidade || '') + (c.local ? ' · ' + c.local : '') + '</div>';
+      if (c.alertas) {
+        var als = [c.alertas.dias2?'2 dias':null, c.alertas.dia1?'1 dia':null, c.alertas.noDia?'no dia':null].filter(Boolean);
+        if (als.length) h += '<div style="font-size:10px;color:var(--verde);font-weight:700;">🔔 ' + als.join(', ') + '</div>';
+      }
+      h += '</div>';
+      h += '<button onclick="excluirConsPaciente(\"' + id + '\",' + c.id + ')" style="background:#fee2e2;border:none;border-radius:6px;width:30px;height:30px;cursor:pointer;font-size:14px;">🗑️</button>';
       h += '</div>';
     });
-    h += '</div>';
-  }
-
-  // Botão editar (para todos)
-  h += '<div style="display:flex;gap:8px;margin-top:12px;">';
-  h += '<button onclick="abrirModalEditarPessoa(\"'+id+'\")" style="flex:1;padding:12px;background:var(--verde-claro);color:var(--verde);border:2px solid var(--verde);border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">✏️ Editar</button>';
-  if (!p.principal) {
-    h += '<button onclick="excluirPessoa(\"'+id+'\")" class="btn-vermelho" style="flex:1;">🗑️ Excluir</button>';
   }
   h += '</div>';
+
+  // BOTÕES AÇÃO
+  h += '<div style="display:flex;gap:8px;">';
+  h += '<button onclick="abrirModalEditarPessoa(\"' + id + '\")" style="flex:1;padding:13px;background:var(--verde-claro);color:var(--verde);border:2px solid var(--verde);border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif;">✏️ Editar Cadastro</button>';
+  if (!p.principal) {
+    h += '<button onclick="excluirPessoa(\"' + id + '\")" class="btn-vermelho" style="flex:1;">🗑️ Excluir</button>';
+  }
+  h += '</div>';
+
   document.getElementById('verPessoaConteudo').innerHTML = h;
 }
 
