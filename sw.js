@@ -4,7 +4,7 @@
  * - Mostra as notificações de remédio e consulta
  * Ao publicar uma nova versão, aumente o número abaixo.
  */
-const VERSAO = 'previta-v3';
+const VERSAO = 'previta-v4';
 const ARQUIVOS = ['./index.html', './manifest.json', './icon.png', './previta-icon.svg'];
 const EXTERNOS_OK = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdnjs.cloudflare.com'];
 

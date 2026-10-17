@@ -29,15 +29,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .logo-area{display:flex;align-items:center;gap:10px;}
 .logo-box{width:44px;height:44px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.2);flex-shrink:0;}
 .logo-text h1{font-size:20px;font-weight:900;letter-spacing:-0.5px;}
-.logo-text p{font-size:10px;opacity:0.8;font-weight:600;}
+.logo-text p{font-size:12px;opacity:0.8;font-weight:600;}
 .header-right{text-align:right;}
 .periodo-badge{font-size:13px;font-weight:800;opacity:0.95;}
-.header-data{font-size:10px;opacity:0.75;font-weight:600;margin-top:2px;}
+.header-data{font-size:12px;opacity:0.75;font-weight:600;margin-top:2px;}
 .alerta-hoje{margin-top:10px;background:rgba(255,255,255,0.15);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px;}
-.badge-alerta{background:var(--laranja);color:white;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:800;margin-left:auto;}
+.badge-alerta{background:var(--laranja);color:white;border-radius:20px;padding:2px 10px;font-size:13px;font-weight:800;margin-left:auto;}
 .btn-alarme{background:rgba(255,255,255,0.2);border:none;color:white;border-radius:9px;padding:4px 10px;font-size:16px;cursor:pointer;flex-shrink:0;}
 .nav-tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:white;display:flex;border-top:1px solid #e5e7eb;box-shadow:0 -4px 20px rgba(0,0,0,0.08);z-index:200;overflow-x:auto;}
-.tab-btn{flex:1;padding:10px 2px 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--cinza-texto);font-family:'Nunito',sans-serif;font-size:9px;font-weight:700;white-space:nowrap;min-width:44px;}
+.tab-btn{flex:1;padding:10px 2px 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--cinza-texto);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;white-space:nowrap;min-width:44px;}
 .tab-btn.ativa{color:var(--verde);}
 .tab-btn .icon{font-size:20px;}
 .tela{display:none;padding:14px;}
@@ -46,8 +46,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .card-titulo{font-size:16px;font-weight:800;color:var(--verde);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
 .banner-info{background:linear-gradient(135deg,#1a7a4a,#0d4f2e);border-radius:14px;padding:14px 16px;margin-bottom:12px;color:white;text-align:center;}
 .banner-info h3{font-size:14px;font-weight:900;margin-bottom:5px;}
-.banner-info p{font-size:11px;font-weight:600;opacity:0.9;line-height:1.6;}
-.banner-info small{font-size:9px;opacity:0.7;display:block;margin-top:4px;}
+.banner-info p{font-size:13px;font-weight:600;opacity:0.9;line-height:1.6;}
+.banner-info small{font-size:12px;opacity:0.7;display:block;margin-top:4px;}
 .periodo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
 .periodo-box{border-radius:14px;padding:12px 8px;text-align:center;cursor:pointer;border:3px solid transparent;transition:all 0.2s;}
 .periodo-box.manha{background:linear-gradient(160deg,#fff8e1,#ffe082);}
@@ -55,7 +55,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .periodo-box.noite{background:linear-gradient(160deg,#e8eaf6,#9fa8da);}
 .periodo-box .periodo-icon{font-size:36px;display:block;margin-bottom:4px;}
 .periodo-box .periodo-label{font-size:12px;font-weight:800;display:block;}
-.periodo-box .periodo-hora{font-size:10px;font-weight:600;color:#555;display:block;margin-top:2px;}
+.periodo-box .periodo-hora{font-size:12px;font-weight:600;color:#555;display:block;margin-top:2px;}
 .periodo-box.sel-manha{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.2);}
 .periodo-box.sel-tarde{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,0.2);}
 .periodo-box.sel-noite{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.2);}
@@ -63,12 +63,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .remedio-item:last-child{border-bottom:none;padding-bottom:0;}
 .remedio-periodo{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:46px;}
 .remedio-periodo .p-icon{font-size:28px;}
-.remedio-periodo .p-label{font-size:9px;font-weight:800;color:var(--cinza-texto);}
+.remedio-periodo .p-label{font-size:12px;font-weight:800;color:var(--cinza-texto);}
 .remedio-info{flex:1;}
 .remedio-nome{font-size:16px;font-weight:800;}
 .remedio-dose{font-size:13px;color:var(--cinza-texto);font-weight:600;margin-top:2px;}
 .remedio-horarios{margin-top:4px;display:flex;gap:5px;flex-wrap:wrap;}
-.horario-badge{background:var(--verde-claro);color:var(--verde);border-radius:8px;padding:2px 8px;font-size:11px;font-weight:700;}
+.horario-badge{background:var(--verde-claro);color:var(--verde);border-radius:8px;padding:2px 8px;font-size:13px;font-weight:700;}
 .check-btn{width:36px;height:36px;border-radius:10px;border:2px solid #d1d5db;background:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
 .check-btn.tomado{background:var(--verde);border-color:var(--verde);}
 .del-btn{width:32px;height:32px;border-radius:8px;border:none;background:#fee2e2;color:#ef4444;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -77,36 +77,36 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .agenda-hora{font-size:14px;font-weight:900;color:var(--verde);min-width:48px;text-align:center;}
 .agenda-info{flex:1;}
 .agenda-nome{font-size:14px;font-weight:800;}
-.agenda-dose{font-size:11px;color:var(--cinza-texto);font-weight:600;}
+.agenda-dose{font-size:13px;color:var(--cinza-texto);font-weight:600;}
 .agenda-status{font-size:20px;}
 .consulta-card{background:white;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--sombra);border-left:4px solid var(--verde);display:flex;align-items:flex-start;gap:12px;}
 .consulta-data-box{background:var(--verde);color:white;border-radius:10px;padding:8px 10px;text-align:center;min-width:50px;flex-shrink:0;}
 .consulta-dia{font-size:22px;font-weight:900;line-height:1;}
-.consulta-mes{font-size:11px;font-weight:700;text-transform:uppercase;}
+.consulta-mes{font-size:13px;font-weight:700;text-transform:uppercase;}
 .consulta-info{flex:1;}
 .consulta-titulo{font-size:15px;font-weight:800;}
 .consulta-detalhe{font-size:12px;color:var(--cinza-texto);font-weight:600;margin-top:3px;}
-.badge-ag{background:var(--verde-claro);color:var(--verde);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:800;margin-top:6px;display:inline-block;}
-.badge-re{background:#e8f0ff;color:#3b5bdb;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:800;margin-top:6px;display:inline-block;}
+.badge-ag{background:var(--verde-claro);color:var(--verde);border-radius:8px;padding:3px 10px;font-size:13px;font-weight:800;margin-top:6px;display:inline-block;}
+.badge-re{background:#e8f0ff;color:#3b5bdb;border-radius:8px;padding:3px 10px;font-size:13px;font-weight:800;margin-top:6px;display:inline-block;}
 .paciente-card{background:white;border-radius:var(--radius);padding:14px;margin-bottom:10px;box-shadow:var(--sombra);display:flex;align-items:center;gap:12px;cursor:pointer;}
 .paciente-avatar{width:46px;height:46px;border-radius:50%;background:var(--verde-claro);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
 .paciente-info{flex:1;}
 .paciente-nome{font-size:15px;font-weight:800;}
 .paciente-end{font-size:12px;color:var(--cinza-texto);font-weight:600;margin-top:2px;}
-.paciente-meds{font-size:11px;color:var(--verde);font-weight:700;margin-top:4px;}
-.badge-micro{background:var(--verde);color:white;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:800;flex-shrink:0;}
+.paciente-meds{font-size:13px;color:var(--verde);font-weight:700;margin-top:4px;}
+.badge-micro{background:var(--verde);color:white;border-radius:8px;padding:3px 8px;font-size:13px;font-weight:800;flex-shrink:0;}
 .receita-preview{margin-top:8px;border-radius:10px;overflow:hidden;max-height:120px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;}
 .receita-preview img{width:100%;max-height:120px;object-fit:cover;}
-.receita-badge{display:inline-flex;align-items:center;gap:4px;background:#fff3e8;color:var(--laranja);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:800;margin-top:6px;}
+.receita-badge{display:inline-flex;align-items:center;gap:4px;background:#fff3e8;color:var(--laranja);border-radius:8px;padding:3px 10px;font-size:13px;font-weight:800;margin-top:6px;}
 .membro-card{background:white;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--sombra);display:flex;align-items:center;gap:14px;}
 .membro-avatar{width:50px;height:50px;border-radius:50%;background:var(--verde-claro);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:3px solid var(--verde);}
 .membro-info{flex:1;}
 .membro-nome{font-size:15px;font-weight:800;}
 .membro-cargo{font-size:12px;color:var(--verde);font-weight:700;margin-top:2px;}
 .membro-contato{font-size:12px;color:var(--cinza-texto);font-weight:600;margin-top:3px;}
-.membro-area{display:inline-block;background:var(--verde-claro);color:var(--verde);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:800;margin-top:6px;}
+.membro-area{display:inline-block;background:var(--verde-claro);color:var(--verde);border-radius:8px;padding:3px 10px;font-size:13px;font-weight:800;margin-top:6px;}
 .dica-card{background:white;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:var(--sombra);border-left:4px solid var(--laranja);}
-.dica-tag{display:inline-block;background:var(--laranja-claro);color:var(--laranja);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:800;margin-bottom:8px;}
+.dica-tag{display:inline-block;background:var(--laranja-claro);color:var(--laranja);border-radius:8px;padding:3px 10px;font-size:13px;font-weight:800;margin-bottom:8px;}
 .dica-titulo{font-size:15px;font-weight:800;margin-bottom:6px;}
 .dica-texto{font-size:13px;color:var(--cinza-texto);font-weight:600;line-height:1.6;}
 .dica-filtros{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px;}
@@ -117,7 +117,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .guia-icon-box{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
 .guia-titulo{flex:1;}
 .guia-titulo h3{font-size:15px;font-weight:800;}
-.guia-titulo p{font-size:11px;color:var(--cinza-texto);font-weight:600;margin-top:2px;}
+.guia-titulo p{font-size:13px;color:var(--cinza-texto);font-weight:600;margin-top:2px;}
 .guia-seta{font-size:18px;color:var(--cinza-texto);transition:transform 0.3s;}
 .guia-seta.aberto{transform:rotate(90deg);}
 .guia-corpo{display:none;padding:0 16px 16px;border-top:1px solid var(--cinza);}
@@ -158,21 +158,21 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .dose-linha{display:flex;align-items:center;gap:8px;margin-top:6px;}
 .dose-linha .dose-hora{min-width:58px;text-align:center;background:var(--verde-claro);color:var(--verde);border-radius:8px;padding:8px 4px;font-size:13px;font-weight:800;}
 .dose-linha input{flex:1;}
-.dose-badge{display:inline-block;background:var(--verde-claro);color:var(--verde);border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;margin:2px 3px 0 0;}
+.dose-badge{display:inline-block;background:var(--verde-claro);color:var(--verde);border-radius:6px;padding:2px 7px;font-size:13px;font-weight:700;margin:2px 3px 0 0;}
 .edit-btn{width:32px;height:32px;border-radius:8px;border:none;background:#e0f2fe;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.horario-toggle{padding:8px 4px;border:2px solid #e5e7eb;border-radius:10px;background:none;font-size:11px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;text-align:center;}
+.horario-toggle{padding:8px 4px;border:2px solid #e5e7eb;border-radius:10px;background:none;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;text-align:center;}
 .horario-toggle.sel{background:var(--verde-claro);border-color:var(--verde);color:var(--verde);}
 .modal-fechar{position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:var(--cinza-texto);}
 .perfil-avatar{width:78px;height:78px;border-radius:50%;background:var(--verde-claro);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 12px;border:3px solid var(--verde);}
 .tipo-select-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:14px 0;}
-.tipo-select-btn{padding:12px 6px;border:2px solid #e5e7eb;border-radius:12px;background:white;cursor:pointer;text-align:center;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;color:var(--texto);}
+.tipo-select-btn{padding:12px 6px;border:2px solid #e5e7eb;border-radius:12px;background:white;cursor:pointer;text-align:center;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--texto);}
 .tipo-select-btn .tipo-icon{font-size:24px;display:block;margin-bottom:5px;}
 .tipo-select-btn.sel-acs{border-color:var(--verde);background:var(--verde-claro);color:var(--verde);}
 .tipo-select-btn.sel-cuidador{border-color:var(--laranja);background:var(--laranja-claro);color:var(--laranja);}
 .tipo-select-btn.sel-paciente{border-color:#3b5bdb;background:#e8f0ff;color:#3b5bdb;}
 .perfil-info-linha{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--cinza);font-size:13px;font-weight:600;}
 .perfil-info-linha:last-child{border-bottom:none;}
-.perfil-info-linha .label{color:var(--cinza-texto);font-size:11px;min-width:90px;}
+.perfil-info-linha .label{color:var(--cinza-texto);font-size:13px;min-width:90px;}
 .tipo-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:800;}
 .tipo-acs{background:var(--verde);color:white;}
 .tipo-cuidador{background:var(--laranja);color:white;}
@@ -180,17 +180,24 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f2;color:var(--texto);min-h
 .stats-row{display:flex;gap:10px;margin-bottom:12px;}
 .stat-box{flex:1;background:white;border-radius:14px;padding:12px;text-align:center;box-shadow:var(--sombra);}
 .stat-num{font-size:30px;font-weight:900;color:var(--verde);}
-.stat-label{font-size:11px;color:var(--cinza-texto);font-weight:700;}
+.stat-label{font-size:13px;color:var(--cinza-texto);font-weight:700;}
 .progresso-bar{height:6px;background:#e5e7eb;border-radius:10px;margin:8px 0;overflow:hidden;}
 .progresso-fill{height:100%;background:var(--verde);border-radius:10px;transition:width 0.3s;}
 .vazio{text-align:center;padding:28px;color:var(--cinza-texto);font-size:14px;font-weight:600;}
-.rodape{text-align:center;font-size:10px;color:#9ca3af;padding:12px;line-height:1.8;font-weight:600;background:white;border-radius:14px;margin-top:8px;box-shadow:var(--sombra);}
+.rodape{text-align:center;font-size:12px;color:#9ca3af;padding:12px;line-height:1.8;font-weight:600;background:white;border-radius:14px;margin-top:8px;box-shadow:var(--sombra);}
 .rodape strong{color:var(--verde);}
+.rodape:has(.anuncio){background:none;box-shadow:none;padding:0;}
+.rod-links a{color:var(--verde);}
+.anuncio .an-assina{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.15);text-align:center;font-size:12px;color:#d1d5db;line-height:1.6;}
+.anuncio .an-assina strong{color:white;}
+.anuncio .an-links a{color:#86efac;font-size:12px;}
 .anuncio{margin-top:10px;text-align:left;background:linear-gradient(135deg,#111827,#374151);border-radius:12px;padding:12px;color:white;border-left:4px solid #dc2626;}
-.anuncio .an-tit{font-size:13px;font-weight:900;color:white;}
-.anuncio .an-sub{font-size:11px;color:#d1d5db;font-weight:600;line-height:1.5;margin-top:2px;}
+.anuncio .an-selo{font-size:13px;color:#9ca3af;font-weight:800;letter-spacing:1px;}
+.anuncio .an-slogan{font-size:14px;font-weight:800;color:#fca5a5;margin:4px 0 6px;line-height:1.35;}
+.anuncio .an-tit{font-size:14px;font-weight:900;color:white;}
+.anuncio .an-sub{font-size:13px;color:#d1d5db;font-weight:600;line-height:1.5;margin-top:2px;}
 .anuncio .an-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-.anuncio .an-btns a{flex:1;min-width:80px;text-align:center;background:#dc2626;color:white;text-decoration:none;border-radius:8px;padding:7px 4px;font-size:11px;font-weight:800;}
+.anuncio .an-btns a{flex:1;min-width:80px;text-align:center;background:#dc2626;color:white;text-decoration:none;border-radius:8px;padding:7px 4px;font-size:13px;font-weight:800;}
 .anuncio .an-btns a.sec{background:rgba(255,255,255,0.12);}
 .backup-box summary{font-size:14px;font-weight:800;color:var(--cinza-texto);cursor:pointer;list-style:none;}
 .backup-box summary::-webkit-details-marker{display:none;}
@@ -239,12 +246,12 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
       <div class="periodo-badge" id="periodoBadge">🌅 Bom dia!</div>
       <div class="header-data" id="headerData"></div>
       <button onclick="toggleDarkMode()" id="btnDark" style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:8px;padding:3px 8px;font-size:12px;cursor:pointer;font-weight:700;">🌙</button>
-      <div id="contadorHeader" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:8px;padding:3px 8px;font-size:10px;font-weight:800;color:white;margin-top:4px;display:inline-block;">👥 ...</div>
+      <div id="contadorHeader" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:8px;padding:3px 8px;font-size:12px;font-weight:800;color:white;margin-top:4px;display:inline-block;">👥 ...</div>
     </div>
   </div>
   <div class="alerta-hoje">
     <span>⏰</span>
-    <span id="proximoLembrete" style="font-size:11px;font-weight:600;flex:1">Carregando...</span>
+    <span id="proximoLembrete" style="font-size:13px;font-weight:600;flex:1">Carregando...</span>
     <button class="btn-alarme" onclick="testarSom()" title="Testar alarme">🔔</button>
     <span class="badge-alerta" id="badgeHoje">...</span>
   </div>
@@ -256,12 +263,12 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
     <div style="display:flex;align-items:center;justify-content:space-between;">
       <div><div id="saudacaoInicio" style="font-size:18px;font-weight:900;">Olá! 👋</div>
       <div id="subtituloInicio" style="font-size:12px;opacity:0.85;margin-top:3px;font-weight:600;">Bem-vindo ao PREVITA</div></div>
-      <div style="text-align:right;"><div id="dataInicio" style="font-size:11px;opacity:0.75;font-weight:600;"></div></div>
+      <div style="text-align:right;"><div id="dataInicio" style="font-size:13px;opacity:0.75;font-weight:600;"></div></div>
     </div>
     <div style="margin-top:12px;background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px;">
       <span>⏰</span>
       <span id="proximoRemInicio" style="font-size:12px;font-weight:700;flex:1;">Carregando...</span>
-      <span id="badgeInicio" style="background:var(--laranja);color:white;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:800;"></span>
+      <span id="badgeInicio" style="background:var(--laranja);color:white;border-radius:12px;padding:2px 8px;font-size:13px;font-weight:800;"></span>
     </div>
   </div>
   <div class="stats-row">
@@ -274,19 +281,19 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div onclick="irPara('usuario',document.querySelectorAll('.tab-btn')[6])" style="background:var(--verde-claro);border:2px solid var(--verde);border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
         <div style="font-size:30px;">👤</div><div style="font-size:12px;font-weight:800;color:var(--verde);margin-top:5px;">Meu Perfil</div>
-        <div style="font-size:10px;color:var(--cinza-texto);">Família e pacientes</div>
+        <div style="font-size:12px;color:var(--cinza-texto);">Família e pacientes</div>
       </div>
       <div onclick="irPara('agenda',document.querySelectorAll('.tab-btn')[1])" style="background:#fff3e8;border:2px solid var(--laranja);border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
         <div style="font-size:30px;">📅</div><div style="font-size:12px;font-weight:800;color:var(--laranja);margin-top:5px;">Agenda</div>
-        <div style="font-size:10px;color:var(--cinza-texto);">Remédios e consultas</div>
+        <div style="font-size:12px;color:var(--cinza-texto);">Remédios e consultas</div>
       </div>
       <div onclick="irPara('receita',document.querySelectorAll('.tab-btn')[2])" style="background:#eff6ff;border:2px solid #3b82f6;border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
         <div style="font-size:30px;">📷</div><div style="font-size:12px;font-weight:800;color:#3b82f6;margin-top:5px;">Receita</div>
-        <div style="font-size:10px;color:var(--cinza-texto);">Ler por foto</div>
+        <div style="font-size:12px;color:var(--cinza-texto);">Ler por foto</div>
       </div>
       <div onclick="irPara('ia',document.querySelectorAll('.tab-btn')[5])" style="background:#ede9fe;border:2px solid #7c3aed;border-radius:14px;padding:14px;text-align:center;cursor:pointer;">
         <div style="font-size:30px;">🤖</div><div style="font-size:12px;font-weight:800;color:#7c3aed;margin-top:5px;">PREV</div>
-        <div style="font-size:10px;color:var(--cinza-texto);">Assistente IA</div>
+        <div style="font-size:12px;color:var(--cinza-texto);">Assistente IA</div>
       </div>
     </div>
   </div>
@@ -346,7 +353,7 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
   </div>
   <button class="btn-verde" onclick="abrirModalPaciente()" style="margin-bottom:12px;">➕ Cadastrar Paciente</button>
   <div id="listaPacientes"></div>
-  <div class="card" style="font-size:12px;color:var(--cinza-texto);text-align:center;">🔒 Dados apenas neste dispositivo · LGPD Lei 13.709/2018</div>
+  <div class="card" style="font-size:13px;color:var(--cinza-texto);text-align:center;line-height:1.5;">🔒 Seus remédios e dados ficam guardados <strong>neste aparelho</strong>. A leitura de receita e o PREV online usam IA e só enviam o texto com sua permissão.<br><a href="#" onclick="abrirPrivacidade();return false;" style="color:var(--verde);font-weight:800;">Política de Privacidade (LGPD)</a></div>
   <div class="rodape"></div>
 </div>
 
@@ -397,7 +404,7 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
 <div class="tela" id="tela-receita">
   <div class="card" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:white;border:none;margin-top:14px;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><div style="font-size:28px;">🏥</div><div><div style="font-size:14px;font-weight:900;">Importar Receita Médica</div></div></div>
-    <div style="font-size:11px;opacity:0.85;font-weight:600;">Fotografe sua receita — o app lê e cadastra os remédios automaticamente!</div>
+    <div style="font-size:13px;opacity:0.85;font-weight:600;">Fotografe sua receita — o app lê e cadastra os remédios automaticamente!</div>
   </div>
   <div class="card">
     <div class="card-titulo">📷 Fotografar Receita</div>
@@ -413,7 +420,7 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
     <select id="receitaPessoaId" style="width:100%;padding:14px;border:2px solid var(--verde);border-radius:12px;font-size:15px;font-family:Nunito,sans-serif;font-weight:700;color:var(--texto);background:white;margin-bottom:4px;">
       <option value="">Selecionar pessoa...</option>
     </select>
-    <div style="font-size:11px;color:var(--cinza-texto);font-weight:600;margin-top:6px;">💡 Os remédios serão salvos no cadastro desta pessoa</div>
+    <div style="font-size:13px;color:var(--cinza-texto);font-weight:600;margin-top:6px;">💡 Os remédios serão salvos no cadastro desta pessoa</div>
   </div>
 
   <div class="card">
@@ -585,6 +592,23 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
 
 <input type="file" id="inputImportar" style="display:none;" onchange="importarDados(this)">
 
+<!-- MODAL PRIVACIDADE -->
+<div id="modalPrivacidade" class="modal-overlay">
+  <div class="modal">
+    <button class="modal-fechar" onclick="document.getElementById('modalPrivacidade').classList.remove('aberto')">✕</button>
+    <h2>🔒 Privacidade</h2>
+    <div style="font-size:14px;line-height:1.6;color:var(--texto);">
+      <p><strong>Onde ficam seus dados?</strong><br>Remédios, consultas, pessoas e contatos ficam guardados <strong>só neste aparelho</strong>. O PREVITA não tem cadastro, login nem banco de dados com suas informações.</p>
+      <p style="margin-top:10px;"><strong>O que sai do aparelho?</strong><br>Só quando você usa a <strong>leitura de receita por IA</strong> ou a <strong>pesquisa online do PREV</strong>: o texto da receita ou da pergunta é enviado para processamento por inteligência artificial (servidores Cloudflare e Groq, que podem ficar fora do Brasil). Seu nome e seu perfil não são enviados. Antes do primeiro uso, o app pede sua permissão.</p>
+      <p style="margin-top:10px;"><strong>Contador de acessos</strong><br>O app conta quantas vezes foi aberto, sem identificar quem abriu.</p>
+      <p style="margin-top:10px;"><strong>Seus direitos (LGPD – Lei 13.709/2018)</strong><br>Você pode apagar tudo a qualquer momento no botão abaixo. Dúvidas: <a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--verde);font-weight:800;">previta@fosterconstrucoes.com.br</a></p>
+      <p style="margin-top:10px;font-size:12px;color:var(--cinza-texto);">O PREVITA ajuda a organizar remédios e consultas. Ele não substitui a orientação do médico, do enfermeiro ou do farmacêutico.</p>
+    </div>
+    <div id="statusConsentIA" style="margin-top:12px;font-size:13px;font-weight:700;"></div>
+    <button class="btn-vermelho" onclick="apagarTudo()" style="width:100%;margin-top:12px;">🗑️ Apagar todos os meus dados</button>
+  </div>
+</div>
+
 <!-- NAV -->
 <nav class="nav-tabs">
   <button class="tab-btn ativa" onclick="irPara('inicio',this)"><span class="icon">🏠</span>Início</button>
@@ -699,6 +723,36 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
 
 <script>
 const WORKER_URL = 'https://still-silence-1a38.previtasaude-app.workers.dev';
+
+// ===== SEGURANÇA: texto digitado nunca vira código =====
+// Remove < > " ` de todo texto salvo pelo app (nomes, doses, observações, telefones, backups importados).
+function limparTexto(v) {
+  if (typeof v === 'string') return v.indexOf('data:image/') === 0 ? v.replace(/["'<>`\s]/g, '') : v.replace(/[<>"`]/g, '');
+  if (Array.isArray(v)) return v.map(limparTexto);
+  if (v && typeof v === 'object') { var o = {}; Object.keys(v).forEach(function(k) { o[k] = limparTexto(v[k]); }); return o; }
+  return v;
+}
+function limparValorGuardado(k, v) {
+  if (typeof v !== 'string' || k.indexOf('pv_') !== 0) return v;
+  try { return JSON.stringify(limparTexto(JSON.parse(v))); } catch (e) { return v.replace(/[<>"`]/g, ''); }
+}
+(function() {
+  var setOriginal = Storage.prototype.setItem;
+  Storage.prototype.setItem = function(k, v) { return setOriginal.call(this, k, limparValorGuardado(String(k), String(v))); };
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i), v = localStorage.getItem(k);
+      if (k.indexOf('pv_') === 0) { var limpo = limparValorGuardado(k, v); if (limpo !== v) setOriginal.call(localStorage, k, limpo); }
+    }
+  } catch (e) {}
+  // Campos de texto: impede digitar/colar < > " `
+  document.addEventListener('input', function(e) {
+    var t = e.target;
+    if (t && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && /^(text|tel|search|)$/.test(t.type || ''))) && /[<>"`]/.test(t.value)) {
+      var pos = t.selectionStart; t.value = t.value.replace(/[<>"`]/g, ''); try { t.setSelectionRange(pos - 1, pos - 1); } catch (er) {}
+    }
+  }, true);
+})();
 
 let remedios = JSON.parse(localStorage.getItem('pv_remedios') || '[]');
 let tomadosHoje = JSON.parse(localStorage.getItem('pv_tomados_' + hoje()) || '{}');
@@ -929,8 +983,8 @@ function atualizarDashboard() {
         return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--cinza);">' +
           '<span style="font-size:22px;">'+pd2.icon+'</span>' +
           '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">'+r.nome+'</div>' +
-          '<div style="font-size:11px;color:'+(t2===tot2&&tot2>0?'#16a34a':'var(--cinza-texto)')+';font-weight:600;">'+(t2===tot2&&tot2>0?'Tomado':''+t2+'/'+tot2)+'</div></div></div>';
-      }).join('') + (remedios.length > 3 ? '<div style="font-size:11px;color:var(--cinza-texto);text-align:center;padding:6px;">+ '+(remedios.length-3)+' mais</div>' : '');
+          '<div style="font-size:13px;color:'+(t2===tot2&&tot2>0?'#16a34a':'var(--cinza-texto)')+';font-weight:600;">'+(t2===tot2&&tot2>0?'Tomado':''+t2+'/'+tot2)+'</div></div></div>';
+      }).join('') + (remedios.length > 3 ? '<div style="font-size:13px;color:var(--cinza-texto);text-align:center;padding:6px;">+ '+(remedios.length-3)+' mais</div>' : '');
     }
   }
 
@@ -946,7 +1000,7 @@ function atualizarDashboard() {
       divC.innerHTML = '<div style="display:flex;align-items:center;gap:12px;padding:6px 0;">' +
         '<div style="background:var(--verde);color:white;border-radius:10px;padding:8px 10px;text-align:center;min-width:48px;flex-shrink:0;">' +
         '<div style="font-size:20px;font-weight:900;line-height:1;">'+d2.getDate().toString().padStart(2,'0')+'</div>' +
-        '<div style="font-size:10px;font-weight:700;">'+MESES3[d2.getMonth()]+'</div></div>' +
+        '<div style="font-size:12px;font-weight:700;">'+MESES3[d2.getMonth()]+'</div></div>' +
         '<div><div style="font-size:14px;font-weight:800;">'+c2.tipo+'</div>' +
         (c2.especialidade?'<div style="font-size:12px;color:var(--cinza-texto);">'+c2.especialidade+'</div>':'') +
         (c2.local?'<div style="font-size:12px;color:var(--cinza-texto);">'+c2.local+'</div>':'')+'</div></div>';
@@ -975,7 +1029,7 @@ function renderContatos() {
       return '<a href="tel:' + e.t + '" style="text-decoration:none;color:inherit;background:white;border-radius:14px;padding:12px;box-shadow:var(--sombra);display:block;">' +
         '<div style="font-size:22px;">' + e.i + '</div>' +
         '<div style="font-size:14px;font-weight:900;">' + e.n + ' <span style="color:#dc2626;">' + e.t + '</span></div>' +
-        '<div style="font-size:11px;color:var(--cinza-texto);font-weight:600;">' + e.d + '</div></a>';
+        '<div style="font-size:13px;color:var(--cinza-texto);font-weight:600;">' + e.d + '</div></a>';
     }).join('') + '</div>' +
     '<div style="font-size:12px;font-weight:800;color:var(--verde);margin-bottom:8px;">📇 MEUS CONTATOS</div>';
   if (!contatos.length) {
@@ -989,8 +1043,8 @@ function renderContatos() {
       '<div style="flex:1;">' +
         '<div style="font-size:15px;font-weight:800;">' + c.nome + '</div>' +
         '<div style="font-size:12px;color:var(--verde);font-weight:700;">' + (c.tipo||'') + '</div>' +
-        (c.tel ? '<a href="tel:'+c.tel+'" style="font-size:13px;color:#2563eb;font-weight:700;display:block;margin-top:3px;">📱 '+c.tel+'</a>' : '') +
-        (c.obs ? '<div style="font-size:11px;color:var(--cinza-texto);">'+c.obs+'</div>' : '') +
+        (c.tel ? '<a href="tel:'+esc(c.tel)+'" style="font-size:13px;color:#2563eb;font-weight:700;display:block;margin-top:3px;">📱 '+c.tel+'</a>' : '') +
+        (c.obs ? '<div style="font-size:13px;color:var(--cinza-texto);">'+c.obs+'</div>' : '') +
       '</div>' +
       '<button onclick="excluirContato('+c.id+')" style="background:#fee2e2;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;">🗑️</button>' +
     '</div>';
@@ -1178,8 +1232,8 @@ function renderRemedios() {
         '<div class="remedio-info">' +
           '<div class="remedio-nome">' + r.nome + '</div>' +
           (r.obs ? '<div class="remedio-dose">' + esc(r.obs) + '</div>' : '') +
-          '<div class="remedio-horarios">' + badgesDoses(r) + '</div>' +
-          (tom > 0 ? '<div style="font-size:11px;color:var(--verde);font-weight:700;margin-top:4px;">✅ ' + tom + '/' + (r.horarios || []).length + ' tomado hoje</div>' : '') +
+          '<div class="remedio-horarios">' + ((r.horarios || []).length ? badgesDoses(r) : '<span class="dose-badge" style="background:#fff3e8;color:#c2410c;">⚠️ Sem horário – toque em ✏️</span>') + '</div>' +
+          (tom > 0 ? '<div style="font-size:13px;color:var(--verde);font-weight:700;margin-top:4px;">✅ ' + tom + '/' + (r.horarios || []).length + ' tomado hoje</div>' : '') +
         '</div>' +
         '<button class="check-btn' + (todosT ? ' tomado' : '') + '" onclick="marcarTodos(' + r.id + ')">' + (todosT ? '✓' : '○') + '</button>' +
         '<button class="edit-btn" onclick="abrirEditarRemedio(' + r.id + ')" title="Editar">✏️</button>' +
@@ -1402,7 +1456,7 @@ function renderVerPaciente(id) {
   // Dados básicos
   html2 += '<div style="background:var(--cinza);border-radius:12px;padding:12px;margin-bottom:12px;">';
   if (p.end) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">📍 ' + p.end + '</div>';
-  if (p.tel) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">📱 <a href="tel:' + p.tel + '" style="color:var(--verde);">' + p.tel + '</a></div>';
+  if (p.tel) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">📱 <a href="tel:' + esc(p.tel) + '" style="color:var(--verde);">' + p.tel + '</a></div>';
   if (p.condicao) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">🏥 ' + p.condicao + '</div>';
   html2 += '</div>';
 
@@ -1420,7 +1474,7 @@ function renderVerPaciente(id) {
       html2 += '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--verde-claro);border-radius:10px;margin-bottom:6px;">';
       html2 += '<span style="font-size:20px;">💊</span>';
       html2 += '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + r.nome + '</div>';
-      html2 += '<div style="font-size:11px;color:var(--cinza-texto);">' + textoDoses(r) + '</div></div>';
+      html2 += '<div style="font-size:13px;color:var(--cinza-texto);">' + textoDoses(r) + '</div></div>';
       html2 += '<button onclick="excluirRemPaciente(' + id + ',' + r.id + ')" style="background:#fee2e2;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:13px;">🗑️</button>';
       html2 += '</div>';
     });
@@ -1441,9 +1495,9 @@ function renderVerPaciente(id) {
       const d = new Date(c.data+'T12:00:00');
       const passada = c.data < hoje2;
       html2 += '<div style="display:flex;align-items:center;gap:8px;padding:8px;background:' + (passada?'#f3f4f6':'#e0f2fe') + ';border-radius:10px;margin-bottom:6px;">';
-      html2 += '<div style="background:var(--verde);color:white;border-radius:8px;padding:4px 8px;text-align:center;min-width:40px;"><div style="font-size:16px;font-weight:900;line-height:1;">' + d.getDate().toString().padStart(2,'0') + '</div><div style="font-size:9px;font-weight:700;">' + ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][d.getMonth()] + '</div></div>';
+      html2 += '<div style="background:var(--verde);color:white;border-radius:8px;padding:4px 8px;text-align:center;min-width:40px;"><div style="font-size:16px;font-weight:900;line-height:1;">' + d.getDate().toString().padStart(2,'0') + '</div><div style="font-size:12px;font-weight:700;">' + ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][d.getMonth()] + '</div></div>';
       html2 += '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + c.tipo + '</div>';
-      html2 += '<div style="font-size:11px;color:var(--cinza-texto);">' + (c.especialidade||'') + (c.local?' · '+c.local:'') + '</div></div>';
+      html2 += '<div style="font-size:13px;color:var(--cinza-texto);">' + (c.especialidade||'') + (c.local?' · '+c.local:'') + '</div></div>';
       html2 += '<button onclick="excluirConsPaciente(' + id + ',' + c.id + ')" style="background:#fee2e2;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:13px;">🗑️</button>';
       html2 += '</div>';
     });
@@ -1655,7 +1709,7 @@ function buscarResposta(msg) {
   }
   return null;
 }
-function fmt(t) { return t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); }
+function fmt(t) { return esc(t).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); }
 
 function adicionarMsgChat(tipo, html) {
   const chat = document.getElementById('iaChat');
@@ -1671,7 +1725,7 @@ function enviarIA() {
   const input = document.getElementById('iaInput'), msg = input.value.trim(); if (!msg) return;
   ultimaPerguntaIA = msg; input.value = '';
   document.getElementById('btnPesquisarOnline').style.display = 'none';
-  adicionarMsgChat('user', msg);
+  adicionarMsgChat('user', esc(msg));
   const chat = document.getElementById('iaChat');
   const typing = document.createElement('div');
   typing.className = 'msg ia';
@@ -1681,19 +1735,20 @@ function enviarIA() {
     typing.remove();
     const resposta = buscarResposta(msg);
     if (resposta) { adicionarMsgChat('ia', fmt(resposta)); }
-    else { adicionarMsgChat('ia', '💊 Não encontrei "<strong>' + msg + '</strong>" offline.<br><br>Clique abaixo para pesquisar online! 🌐'); }
+    else { adicionarMsgChat('ia', '💊 Não encontrei "<strong>' + esc(msg) + '</strong>" offline.<br><br>Clique abaixo para pesquisar online! 🌐'); }
     document.getElementById('btnPesquisarOnline').style.display = 'block';
   }, 400 + Math.random() * 400);
 }
 
 async function pesquisarOnline() {
   const msg = ultimaPerguntaIA; if (!msg) return;
+  if (!pedirConsentimentoIA()) { adicionarMsgChat('ia', '👍 Tudo bem, nada foi enviado. Continuo respondendo só com as informações que já estão no app.'); return; }
   if (!WORKER_URL || WORKER_URL.includes('SEUUSUARIO')) { adicionarMsgChat('ia', '⚠️ Worker ainda não configurado.'); return; }
   document.getElementById('btnPesquisarOnline').style.display = 'none';
   const chat = document.getElementById('iaChat');
   const loading = document.createElement('div');
   loading.className = 'msg ia';
-  loading.innerHTML = '<div class="msg-bubble" style="background:#e0f2fe;color:#0369a1;">🌐 Pesquisando online sobre <strong>' + msg + '</strong>...<br><span style="font-size:11px;opacity:0.8;">Aguarde alguns segundos...</span></div>';
+  loading.innerHTML = '<div class="msg-bubble" style="background:#e0f2fe;color:#0369a1;">🌐 Pesquisando online sobre <strong>' + esc(msg) + '</strong>...<br><span style="font-size:13px;opacity:0.8;">Aguarde alguns segundos...</span></div>';
   chat.appendChild(loading); chat.scrollTop = chat.scrollHeight;
   try {
     const resp = await fetch(WORKER_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pergunta: msg})});
@@ -1736,7 +1791,13 @@ async function previewReceitaFoto(input) {
         status.innerHTML = '⚠️ <strong>Não consegui ler esta receita.</strong><br><small>Receitas manuscritas são difíceis de ler automaticamente.<br>Digite os remédios manualmente no campo abaixo.</small>';
         return;
       }
-      // PASSO 2: Groq filtra ANTES de mostrar no campo
+      // PASSO 2: Groq filtra ANTES de mostrar no campo (só com permissão)
+      if (!pedirConsentimentoIA()) {
+        document.getElementById('receitaTextoInput').value = textoLido;
+        status.style.background = '#fff3e8'; status.style.color = '#c2410c';
+        status.textContent = '✅ Texto lido no próprio aparelho. Apague o que não for remédio antes de continuar.';
+        return;
+      }
       status.style.background = '#e0f2fe'; status.style.color = '#0369a1';
       status.textContent = '🤖 Identificando medicamentos na receita...';
       try {
@@ -1782,15 +1843,9 @@ function processarReceitaTexto() {
   if (!texto) { alert('Digite ou cole os remédios primeiro!'); return; }
   const linhas = texto.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 2);
   if (!linhas.length) { alert('Nenhum remédio encontrado!'); return; }
+  // O horário vem da RECEITA: a pessoa escolhe; o app não decide sozinho
   receitaProcessadaFinal = linhas.map(function(linha) {
-    let horarios = ['08:00'];
-    const l = linha.toLowerCase();
-    if (l.includes('sinvastatin') || l.includes('atorvastatin')) horarios = ['20:00'];
-    else if (l.includes('levotiroxin') || l.includes('omeprazol') || l.includes('pantoprazol')) horarios = ['06:30'];
-    else if (l.includes('metformin')) horarios = ['08:00','20:00'];
-    else if (l.includes('hidroclorotia')) horarios = ['07:00'];
-    else if (l.includes('insulina')) horarios = ['08:00','12:00','18:00'];
-    return {nome: linha.substring(0, 60), dose: '1 unidade', horarios: horarios, periodo: parseInt(horarios[0]) < 12 ? 'manha' : parseInt(horarios[0]) < 18 ? 'tarde' : 'noite', obs: ''};
+    return {nome: linha.substring(0, 60), dose: '1 unidade', horarios: [], periodo: '', obs: ''};
   });
   renderReceitaResultado();
 }
@@ -1799,12 +1854,13 @@ function renderReceitaResultado() {
   const PL = {manha:'🌅', tarde:'☀️', noite:'🌙'};
   document.getElementById('receitaResultadoLista').innerHTML = receitaProcessadaFinal.map(function(r, i) {
     return '<div style="padding:10px 0;border-bottom:1px solid var(--cinza);display:flex;align-items:center;gap:10px;">' +
-      '<div style="font-size:22px;">' + (PL[r.periodo]||'💊') + '</div>' +
-      '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + r.nome + '</div>' +
-      '<div style="font-size:10px;color:var(--cinza-texto);">' + r.horarios.map(h => '<span style="background:var(--verde-claro);color:var(--verde);border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700;margin-right:3px;">' + h + '</span>').join('') + '</div></div>' +
+      '<div style="font-size:22px;">💊</div>' +
+      '<div style="flex:1;"><div style="font-size:14px;font-weight:800;">' + esc(r.nome) + '</div>' +
+      '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="font-size:12px;color:var(--cinza-texto);font-weight:700;">Horário da receita:</span><input type="time" id="recHora_' + i + '" style="padding:4px 6px;font-size:14px;border:2px solid #e5e7eb;border-radius:8px;"></div></div>' +
       '<input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--verde);" id="recSel_' + i + '">' +
       '</div>';
   }).join('');
+  document.getElementById('receitaResultadoLista').insertAdjacentHTML('afterbegin', '<div style="font-size:13px;color:#c2410c;background:#fff3e8;border-radius:8px;padding:8px;font-weight:700;">⏰ Coloque o horário que está na receita. Se for mais de um horário, adicione depois em Remédios → ✏️ Editar.</div>');
   document.getElementById('receitaResultadoCard').style.display = 'block';
 }
 function importarReceitaSelecionados() {
@@ -1819,7 +1875,9 @@ function importarReceitaSelecionados() {
   receitaProcessadaFinal.forEach(function(r, i) {
     var cb = document.getElementById('recSel_' + i);
     if (!cb || !cb.checked) return;
-    var novoRem = {id: Date.now()+i, nome: r.nome, dose: r.dose, horarios: r.horarios, periodo: r.periodo, obs: r.obs};
+    var horaEl = document.getElementById('recHora_' + i);
+    var hr = horaEl && horaEl.value ? [horaEl.value.slice(0, 5)] : [];
+    var novoRem = {id: Date.now()+i, nome: r.nome, dose: r.dose, horarios: hr, periodo: hr.length ? periodoDoHorario(hr[0]) : '', obs: r.obs};
     if (isGeral || isPrincipal) {
       if (!remedios.find(function(x) { return x.nome.toLowerCase() === r.nome.toLowerCase().substring(0,20); })) {
         remedios.push(novoRem); imp++;
@@ -1902,9 +1960,9 @@ function renderListaPessoas(containerId) {
     return '<div data-pid="' + sid + '" onclick="verPessoa(this.dataset.pid)" style="display:flex;align-items:center;gap:12px;padding:12px;background:' + (isPrincipal ? 'var(--verde-claro)' : 'white') + ';border:2px solid ' + (isPrincipal ? 'var(--verde)' : '#e5e7eb') + ';border-radius:14px;margin-bottom:8px;cursor:pointer;">' +
       '<div style="width:46px;height:46px;border-radius:50%;background:' + (isPrincipal ? 'var(--verde)' : '#e0f2fe') + ';display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">' + (isPrincipal ? '⭐' : '👤') + '</div>' +
       '<div style="flex:1;">' +
-        '<div style="font-size:15px;font-weight:800;">' + p.nome + (isPrincipal ? ' <span style="font-size:10px;background:var(--verde);color:white;border-radius:6px;padding:2px 7px;">Você</span>' : '') + '</div>' +
-        '<div style="font-size:11px;color:var(--cinza-texto);font-weight:600;margin-top:2px;">' + (p.relacao || '') + (p.idade ? ' · ' + p.idade : '') + (p.condicao ? ' · ' + p.condicao : '') + '</div>' +
-        '<div style="font-size:11px;color:var(--verde);font-weight:700;margin-top:3px;">💊 ' + remCount + ' remédio' + (remCount !== 1 ? 's' : '') + '  📅 ' + consCount + ' consulta' + (consCount !== 1 ? 's' : '') + '</div>' +
+        '<div style="font-size:15px;font-weight:800;">' + p.nome + (isPrincipal ? ' <span style="font-size:12px;background:var(--verde);color:white;border-radius:6px;padding:2px 7px;">Você</span>' : '') + '</div>' +
+        '<div style="font-size:13px;color:var(--cinza-texto);font-weight:600;margin-top:2px;">' + (p.relacao || '') + (p.idade ? ' · ' + p.idade : '') + (p.condicao ? ' · ' + p.condicao : '') + '</div>' +
+        '<div style="font-size:13px;color:var(--verde);font-weight:700;margin-top:3px;">💊 ' + remCount + ' remédio' + (remCount !== 1 ? 's' : '') + '  📅 ' + consCount + ' consulta' + (consCount !== 1 ? 's' : '') + '</div>' +
       '</div>' +
       '<span style="font-size:20px;color:var(--cinza-texto);">›</span>' +
     '</div>';
@@ -2009,11 +2067,11 @@ function renderVerPessoa(id) {
   var h = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--cinza);">';
   h += '<div style="width:58px;height:58px;border-radius:50%;background:' + (p.principal ? 'var(--verde)' : '#e0f2fe') + ';display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">' + (p.principal ? '⭐' : '👤') + '</div>';
   h += '<div style="flex:1;">';
-  h += '<div style="font-size:18px;font-weight:900;">' + p.nome + (p.principal ? ' <span style="font-size:11px;background:var(--verde);color:white;border-radius:6px;padding:2px 8px;">Responsável</span>' : '') + '</div>';
+  h += '<div style="font-size:18px;font-weight:900;">' + p.nome + (p.principal ? ' <span style="font-size:13px;background:var(--verde);color:white;border-radius:6px;padding:2px 8px;">Responsável</span>' : '') + '</div>';
   if (p.relacao) h += '<div style="font-size:12px;color:var(--verde);font-weight:700;">' + p.relacao + '</div>';
   if (p.condicao) h += '<div style="font-size:12px;color:var(--cinza-texto);">🏥 ' + p.condicao + '</div>';
   if (p.nascimento) { var dn=new Date(p.nascimento+'T12:00:00'); h += '<div style="font-size:12px;color:var(--cinza-texto);">🎂 ' + dn.toLocaleDateString('pt-BR') + ' (' + Math.floor((new Date()-dn)/(365.25*24*3600*1000)) + ' anos)</div>'; }
-  if (p.tel) h += '<a href="tel:' + p.tel + '" style="font-size:12px;color:#2563eb;font-weight:700;display:block;">📱 ' + p.tel + '</a>';
+  if (p.tel) h += '<a href="tel:' + esc(p.tel) + '" style="font-size:12px;color:#2563eb;font-weight:700;display:block;">📱 ' + p.tel + '</a>';
   h += '</div></div>';
 
   // REMÉDIOS
@@ -2030,7 +2088,7 @@ function renderVerPessoa(id) {
       h += '<div style="display:flex;align-items:center;gap:8px;padding:9px;background:white;border-radius:10px;margin-bottom:6px;">';
       h += '<span style="font-size:20px;">' + pd2.icon + '</span>';
       h += '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + r.nome + '</div>';
-      h += '<div style="font-size:11px;color:var(--cinza-texto);">' + textoDoses(r) + '</div></div>';
+      h += '<div style="font-size:13px;color:var(--cinza-texto);">' + textoDoses(r) + '</div></div>';
       h += '<button data-pid="' + sid + '" data-rid="' + r.id + '" onclick="excluirRemPaciente(this.dataset.pid,this.dataset.rid)" style="background:#fee2e2;border:none;border-radius:6px;width:30px;height:30px;cursor:pointer;">🗑️</button>';
       h += '</div>';
     });
@@ -2052,10 +2110,10 @@ function renderVerPessoa(id) {
       h += '<div style="display:flex;align-items:center;gap:10px;padding:9px;background:white;border-radius:10px;margin-bottom:6px;">';
       h += '<div style="background:' + (passada?'#9ca3af':'var(--laranja)') + ';color:white;border-radius:8px;padding:5px 8px;text-align:center;min-width:42px;flex-shrink:0;">';
       h += '<div style="font-size:16px;font-weight:900;line-height:1;">' + d2.getDate().toString().padStart(2,'0') + '</div>';
-      h += '<div style="font-size:9px;font-weight:700;">' + MESES2[d2.getMonth()] + '</div></div>';
+      h += '<div style="font-size:12px;font-weight:700;">' + MESES2[d2.getMonth()] + '</div></div>';
       h += '<div style="flex:1;"><div style="font-size:13px;font-weight:800;">' + c.tipo + '</div>';
-      h += '<div style="font-size:11px;color:var(--cinza-texto);">' + (c.especialidade||'') + (c.local?' · '+c.local:'') + '</div>';
-      if (c.alertas) { var als=[c.alertas.dias2?'2 dias':null,c.alertas.dia1?'1 dia':null,c.alertas.noDia?'no dia':null].filter(Boolean); if(als.length) h += '<div style="font-size:10px;color:var(--verde);font-weight:700;">🔔 '+als.join(', ')+'</div>'; }
+      h += '<div style="font-size:13px;color:var(--cinza-texto);">' + (c.especialidade||'') + (c.local?' · '+c.local:'') + '</div>';
+      if (c.alertas) { var als=[c.alertas.dias2?'2 dias':null,c.alertas.dia1?'1 dia':null,c.alertas.noDia?'no dia':null].filter(Boolean); if(als.length) h += '<div style="font-size:12px;color:var(--verde);font-weight:700;">🔔 '+als.join(', ')+'</div>'; }
       h += '</div>';
       h += '<button data-pid="' + sid + '" data-cid="' + c.id + '" onclick="excluirConsPaciente(this.dataset.pid,this.dataset.cid)" style="background:#fee2e2;border:none;border-radius:6px;width:30px;height:30px;cursor:pointer;">🗑️</button>';
       h += '</div>';
@@ -2324,7 +2382,7 @@ function mostrarProximoAlerta() {
   var a = filaAlertas.shift();
   var m = document.createElement('div'); m.id = 'modalAlerta';
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
-  var restantes = filaAlertas.length ? '<p style="font-size:11px;color:var(--cinza-texto);margin-top:8px;">+ ' + filaAlertas.length + ' alerta(s) na fila</p>' : '';
+  var restantes = filaAlertas.length ? '<p style="font-size:13px;color:var(--cinza-texto);margin-top:8px;">+ ' + filaAlertas.length + ' alerta(s) na fila</p>' : '';
   var btnFechar = '<button onclick="fecharAlerta()" style="width:100%;padding:11px;background:white;color:var(--cinza-texto);border:2px solid #e5e7eb;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">Fechar</button>';
   var html;
   if (a.tipo === 'remedio') {
@@ -2449,10 +2507,34 @@ function compartilharWhatsApp(pessoaId) {
 }
 
 
+// ===== PRIVACIDADE E CONSENTIMENTO =====
+function consentiuIA() { return localStorage.getItem('pv_consent_ia') === '1'; }
+function pedirConsentimentoIA() {
+  if (consentiuIA()) return true;
+  var ok = confirm('🤖 Usar inteligência artificial?\n\nPara isso, o TEXTO (da receita ou da sua pergunta) será enviado a um serviço de IA na internet (Cloudflare e Groq, que podem ficar fora do Brasil).\n\nSeu nome e seu perfil NÃO são enviados.\n\nToque em OK para permitir. Você pode mudar isso em Política de Privacidade.');
+  if (ok) localStorage.setItem('pv_consent_ia', '1');
+  return ok;
+}
+function abrirPrivacidade() {
+  var st = document.getElementById('statusConsentIA');
+  st.innerHTML = consentiuIA()
+    ? '✅ Uso de IA permitido. <a href="#" onclick="localStorage.removeItem(\'pv_consent_ia\');abrirPrivacidade();return false;" style="color:#c2410c;">Retirar permissão</a>'
+    : 'ℹ️ Uso de IA ainda não permitido. O app vai perguntar antes de usar.';
+  document.getElementById('modalPrivacidade').classList.add('aberto');
+}
+function apagarTudo() {
+  if (!confirm('Apagar TODOS os dados do PREVITA deste aparelho?\n\nRemédios, consultas, pessoas e contatos serão apagados e não dá para desfazer.')) return;
+  var ks = []; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf('pv_') === 0) ks.push(k); }
+  ks.forEach(function(k) { localStorage.removeItem(k); });
+  alert('✅ Dados apagados.'); location.reload();
+}
+
 // ===== RODAPÉ E DIVULGAÇÃO =====
 // Para desligar a divulgação (ex.: versão para prefeitura), troque ativo para false.
 const DIVULGACAO = {
   ativo: true,
+  selo: 'APOIO · APP GRATUITO',
+  slogan: 'O PREVITA cuida de quem você ama. A Foster cuida de onde vocês moram.',
   titulo: '🏗️ Foster Engenharia & Construção',
   servicos: 'Obras, reformas, telhados e projetos',
   registro: 'Eng. Civil – CREA-SP 5071894914 · São Paulo e região',
@@ -2461,23 +2543,32 @@ const DIVULGACAO = {
   instagram: 'https://instagram.com/foster.engenharia',
   site: 'https://www.fosterconstrucoes.com.br'
 };
-function htmlRodape() {
-  let h = '<strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil | Gestor de Produto<br>Santana de Parnaíba – SP<br>' +
-    '<a href="https://previta-app.github.io/previta" style="color:#4ade80;" target="_blank">previta-app.github.io/previta</a><br>' +
-    '<a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--laranja);">previta@fosterconstrucoes.com.br</a>';
-  if (DIVULGACAO.ativo) {
-    h += '<div class="anuncio"><div style="font-size:9px;color:#9ca3af;font-weight:800;letter-spacing:1px;">CONHEÇA TAMBÉM</div>' +
+function htmlRodape(comAnuncio) {
+  const assinatura = '<strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil';
+  const contatoApp = '<a href="https://previta-app.github.io/previta" target="_blank">previta-app.github.io/previta</a><br>' +
+    '<a href="mailto:previta@fosterconstrucoes.com.br">previta@fosterconstrucoes.com.br</a>';
+  if (DIVULGACAO.ativo && comAnuncio) {
+    return '<div class="anuncio"><div class="an-selo">' + DIVULGACAO.selo + '</div>' +
+      (DIVULGACAO.slogan ? '<div class="an-slogan">' + DIVULGACAO.slogan + '</div>' : '') +
       '<div class="an-tit">' + DIVULGACAO.titulo + '</div>' +
       '<div class="an-sub">' + DIVULGACAO.servicos + '<br>' + DIVULGACAO.registro + '</div>' +
       '<div class="an-btns">' +
         '<a href="https://wa.me/' + DIVULGACAO.whatsapp + '?text=' + encodeURIComponent(DIVULGACAO.mensagem) + '" target="_blank" rel="noopener">💬 Orçamento</a>' +
         '<a class="sec" href="' + DIVULGACAO.instagram + '" target="_blank" rel="noopener">📷 Instagram</a>' +
         '<a class="sec" href="' + DIVULGACAO.site + '" target="_blank" rel="noopener">🌐 Site</a>' +
-      '</div></div>';
+      '</div>' +
+      '<div class="an-assina">' + assinatura + '<div class="an-links">' + contatoApp + '</div></div>' +
+      '</div>';
   }
-  return h;
+  return assinatura + '<br><span class="rod-links">' + contatoApp + '</span>';
 }
-function renderRodapes() { document.querySelectorAll('.rodape').forEach(function(el) { el.innerHTML = htmlRodape(); }); }
+function renderRodapes() {
+  document.querySelectorAll('.rodape').forEach(function(el) {
+    var tela = el.closest('.tela');
+    var comAnuncio = !tela || tela.id === 'tela-inicio' || tela.id === 'tela-usuario';
+    el.innerHTML = htmlRodape(comAnuncio);
+  });
+}
 
 // ===== BACKUP: EXPORTAR / IMPORTAR =====
 function chavesDeDados() {
@@ -2564,6 +2655,7 @@ setTimeout(verificarAlertas, 2000);
 registrarServiceWorker();
 atualizarBotaoNotif();
 renderRodapes();
+if (localStorage.getItem('pv_dark') === '1' && !document.body.classList.contains('dark-mode')) toggleDarkMode();
 setTimeout(verificarBoasVindas, 800);
 // Primeiro acesso: ir para usuario
 setTimeout(function() {
