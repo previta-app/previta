@@ -71,10 +71,11 @@ Deno.serve(async (req) => {
   const pergunta = String(corpo?.pergunta || "").trim().slice(0, modo === "receita" ? 6000 : 1200);
   if (pergunta.length < 2) return resp(req, 400, { erro: "Pergunta vazia." });
 
-  const chave = (Deno.env.get("GROQ_API_KEY") || "").trim();
-  if (!chave) return resp(req, 503, { erro: "IA não configurada." });
-
   const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
+  // chave: segredo da função; se não houver, a reserva guardada em config_privada (só o servidor lê)
+  let chave = (Deno.env.get("GROQ_API_KEY") || "").trim();
+  if (!chave) { const { data } = await sb.from("config_privada").select("valor").eq("nome", "GROQ_API_KEY").maybeSingle(); chave = (data?.valor || "").trim(); }
+  if (!chave) return resp(req, 503, { erro: "IA não configurada." });
   const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "sem-ip";
   const h = await hash(ip);
   const { count } = await sb.from("previta_ia_uso").select("id", { count: "exact", head: true })
