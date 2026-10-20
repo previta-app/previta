@@ -599,7 +599,7 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
     <h2>🔒 Privacidade</h2>
     <div style="font-size:14px;line-height:1.6;color:var(--texto);">
       <p><strong>Onde ficam seus dados?</strong><br>Remédios, consultas, pessoas e contatos ficam guardados <strong>só neste aparelho</strong>. O PREVITA não tem cadastro, login nem banco de dados com suas informações.</p>
-      <p style="margin-top:10px;"><strong>O que sai do aparelho?</strong><br>Só quando você usa a <strong>leitura de receita por IA</strong> ou a <strong>pesquisa online do PREV</strong>: o texto da receita ou da pergunta é enviado para processamento por inteligência artificial (servidores Cloudflare e Groq, que podem ficar fora do Brasil). Seu nome e seu perfil não são enviados. Antes do primeiro uso, o app pede sua permissão.</p>
+      <p style="margin-top:10px;"><strong>O que sai do aparelho?</strong><br>Só quando você usa a <strong>leitura de receita por IA</strong> ou a <strong>pesquisa online do PREV</strong>: o texto da receita ou da pergunta é enviado para processamento por inteligência artificial (servidores Supabase, Cloudflare e Groq, que podem ficar fora do Brasil). Seu nome e seu perfil não são enviados. Antes do primeiro uso, o app pede sua permissão.</p>
       <p style="margin-top:10px;"><strong>Contador de acessos</strong><br>O app conta quantas vezes foi aberto, sem identificar quem abriu.</p>
       <p style="margin-top:10px;"><strong>Seus direitos (LGPD – Lei 13.709/2018)</strong><br>Você pode apagar tudo a qualquer momento no botão abaixo. Dúvidas: <a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--verde);font-weight:800;">previta@fosterconstrucoes.com.br</a></p>
       <p style="margin-top:10px;font-size:12px;color:var(--cinza-texto);">O PREVITA ajuda a organizar remédios e consultas. Ele não substitui a orientação do médico, do enfermeiro ou do farmacêutico.</p>
@@ -722,7 +722,30 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
 </div>
 
 <script>
-const WORKER_URL = 'https://still-silence-1a38.previtasaude-app.workers.dev';
+const WORKER_URL = 'https://still-silence-1a38.previtasaude-app.workers.dev'; // contador de acessos (e reserva da IA)
+const IA_URL = 'https://fvsdlpnvqfvjdxmfgbjx.supabase.co/functions/v1/previta-ia'; // IA do PREV e da receita
+
+// Mensagens de erro do servidor nunca podem virar resposta nem nome de remédio
+function respostaIAValida(t) {
+  t = String(t || '').trim();
+  if (!t) return false;
+  return !/^(erro|error)\b|does not exist|do not have access|invalid api key|rate limit|model_not_found|decommissioned/i.test(t);
+}
+// Pergunta à IA: tenta o servidor novo e, se falhar, o antigo. Devolve o texto ou lança erro.
+async function perguntarIA(pergunta, modo) {
+  const corpo = JSON.stringify(modo ? {pergunta: pergunta, modo: modo} : {pergunta: pergunta});
+  let ultimoErro = 'A IA não respondeu agora.';
+  for (const url of [IA_URL, WORKER_URL]) {
+    try {
+      const r = await fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: corpo});
+      const d = await r.json().catch(function() { return {}; });
+      if (r.ok && respostaIAValida(d.resposta)) return String(d.resposta).trim();
+      if (d && d.erro) ultimoErro = d.erro;
+      if (r.status === 429) break; // limite de uso: não insiste
+    } catch (e) { ultimoErro = 'Sem conexão com o servidor. Verifique sua internet.'; }
+  }
+  throw new Error(ultimoErro);
+}
 
 // ===== SEGURANÇA: texto digitado nunca vira código =====
 // Remove < > " ` de todo texto salvo pelo app (nomes, doses, observações, telefones, backups importados).
@@ -755,6 +778,17 @@ function limparValorGuardado(k, v) {
 })();
 
 let remedios = JSON.parse(localStorage.getItem('pv_remedios') || '[]');
+// Limpeza: versões antigas chegaram a salvar mensagens de erro da IA como se fossem remédios
+(function limparRemediosComErro() {
+  try {
+    const ruim = function(r) { return r && !respostaIAValida(r.nome); };
+    if (remedios.some(ruim)) { remedios = remedios.filter(function(r) { return !ruim(r); }); localStorage.setItem('pv_remedios', JSON.stringify(remedios)); }
+    Object.keys(localStorage).filter(function(k) { return k.indexOf('pv_remedios_pac_') === 0; }).forEach(function(k) {
+      const l = JSON.parse(localStorage.getItem(k) || '[]');
+      if (Array.isArray(l) && l.some(ruim)) localStorage.setItem(k, JSON.stringify(l.filter(function(r) { return !ruim(r); })));
+    });
+  } catch (e) { /* não impede o app de abrir */ }
+})();
 let tomadosHoje = JSON.parse(localStorage.getItem('pv_tomados_' + hoje()) || '{}');
 let consultas = JSON.parse(localStorage.getItem('pv_consultas') || '[]');
 let perfil = JSON.parse(localStorage.getItem('pv_perfil') || 'null');
@@ -1751,10 +1785,10 @@ async function pesquisarOnline() {
   loading.innerHTML = '<div class="msg-bubble" style="background:#e0f2fe;color:#0369a1;">🌐 Pesquisando online sobre <strong>' + esc(msg) + '</strong>...<br><span style="font-size:13px;opacity:0.8;">Aguarde alguns segundos...</span></div>';
   chat.appendChild(loading); chat.scrollTop = chat.scrollHeight;
   try {
-    const resp = await fetch(WORKER_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pergunta: msg})});
-    const data = await resp.json(); loading.remove();
-    adicionarMsgChat('ia', '🌐 <strong>Pesquisa online:</strong><br><br>' + fmt(data.resposta || 'Sem resultado.'));
-  } catch(err) { loading.remove(); adicionarMsgChat('ia', '⚠️ Sem conexão com o servidor. Verifique sua internet.'); }
+    const resposta = await perguntarIA(msg);
+    loading.remove();
+    adicionarMsgChat('ia', '🌐 <strong>Pesquisa online:</strong><br><br>' + fmt(resposta) + '<br><br><span style="font-size:12px;opacity:.75;">Informação geral. Antes de mudar qualquer remédio, fale com seu médico ou farmacêutico.</span>');
+  } catch(err) { loading.remove(); adicionarMsgChat('ia', '⚠️ ' + esc(err.message || 'Não consegui pesquisar agora.') + ' Tente de novo em alguns minutos.'); }
 }
 
 function perguntaRapida(txt) { document.getElementById('iaInput').value = txt; enviarIA(); }
@@ -1801,16 +1835,7 @@ async function previewReceitaFoto(input) {
       status.style.background = '#e0f2fe'; status.style.color = '#0369a1';
       status.textContent = '🤖 Identificando medicamentos na receita...';
       try {
-        const resp = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            pergunta: 'Da lista de texto abaixo, extraia APENAS os nomes de medicamentos/remédios com suas dosagens. Responda SOMENTE com um medicamento por linha, sem explicações, sem numeração, sem texto extra. Se não houver medicamentos, responda: NENHUM. Texto: ' + textoLido,
-            modo: 'receita'
-          })
-        });
-        const data = await resp.json();
-        const medicamentosTexto = (data.resposta || '').trim();
+        const medicamentosTexto = (await perguntarIA('Da lista de texto abaixo, extraia APENAS os nomes de medicamentos/remédios com suas dosagens. Responda SOMENTE com um medicamento por linha, sem explicações, sem numeração, sem texto extra. Se não houver medicamentos, responda: NENHUM. Texto: ' + textoLido, 'receita')).trim();
         if (!medicamentosTexto || medicamentosTexto.toUpperCase().includes('NENHUM')) {
           // Groq não encontrou remédios — orienta digitar manualmente
           document.getElementById('receitaTextoInput').value = '';
@@ -1841,7 +1866,7 @@ let receitaProcessadaFinal = [];
 function processarReceitaTexto() {
   const texto = document.getElementById('receitaTextoInput').value.trim();
   if (!texto) { alert('Digite ou cole os remédios primeiro!'); return; }
-  const linhas = texto.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 2);
+  const linhas = texto.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 2 && respostaIAValida(l));
   if (!linhas.length) { alert('Nenhum remédio encontrado!'); return; }
   // O horário vem da RECEITA: a pessoa escolhe; o app não decide sozinho
   receitaProcessadaFinal = linhas.map(function(linha) {
@@ -2511,7 +2536,7 @@ function compartilharWhatsApp(pessoaId) {
 function consentiuIA() { return localStorage.getItem('pv_consent_ia') === '1'; }
 function pedirConsentimentoIA() {
   if (consentiuIA()) return true;
-  var ok = confirm('🤖 Usar inteligência artificial?\n\nPara isso, o TEXTO (da receita ou da sua pergunta) será enviado a um serviço de IA na internet (Cloudflare e Groq, que podem ficar fora do Brasil).\n\nSeu nome e seu perfil NÃO são enviados.\n\nToque em OK para permitir. Você pode mudar isso em Política de Privacidade.');
+  var ok = confirm('🤖 Usar inteligência artificial?\n\nPara isso, o TEXTO (da receita ou da sua pergunta) será enviado a um serviço de IA na internet (Supabase, Cloudflare e Groq, que podem ficar fora do Brasil).\n\nSeu nome e seu perfil NÃO são enviados.\n\nToque em OK para permitir. Você pode mudar isso em Política de Privacidade.');
   if (ok) localStorage.setItem('pv_consent_ia', '1');
   return ok;
 }
