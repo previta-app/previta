@@ -223,6 +223,14 @@ body.dark-mode .nav-tabs { background:#1f2937; border-color:#374151; }
 body.dark-mode .dica-card, body.dark-mode .consulta-card, body.dark-mode .paciente-card, body.dark-mode .membro-card { background:#1f2937 !important; }
 body.dark-mode .horario-badge { background:#065f46 !important; }
 body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; color:#f9fafb !important; }
+.cond-multi{border:2px solid var(--cinza,#e5e7eb);border-radius:12px;padding:10px;background:#fff;}
+.cond-multi .cm-sel{font-size:14px;font-weight:700;color:var(--verde);margin-bottom:6px;}
+.cond-multi .cm-grupo{font-size:12px;font-weight:800;color:var(--cinza-texto,#6b7280);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 6px;}
+.cond-multi .cm-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.cond-multi .cm-lista{max-height:260px;overflow-y:auto;-webkit-overflow-scrolling:touch;border-top:1px solid #eef0f2;border-bottom:1px solid #eef0f2;padding-bottom:8px;}
+.cond-multi .cm-chip{border:2px solid #d1d5db;background:#f9fafb;color:#374151;border-radius:999px;padding:6px 11px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;}
+.cond-multi .cm-chip.on{background:var(--verde);border-color:var(--verde);color:#fff;}
+.cond-multi .cm-outra{margin-top:10px;width:100%;}
 </style>
 </head>
 <body>
@@ -1462,7 +1470,7 @@ function renderPacientes() {
     '<div class="paciente-card" onclick="verPaciente(' + p.id + ')">' +
     '<div class="paciente-avatar">👤</div>' +
     '<div class="paciente-info"><div class="paciente-nome">' + p.nome + '</div><div class="paciente-end">📍 ' + (p.end||'—') + '</div><div class="paciente-meds">💊 ' + (p.meds||'—') + '</div>' + (p.receitaImg ? '<span class="receita-badge">📋 Receita salva</span>' : '') + '</div>' +
-    '<span class="badge-micro">' + (p.condicao ? p.condicao.split(' ')[0] : 'Geral') + '</span>' +
+    '<span class="badge-micro">' + (p.condicao ? esc(p.condicao.split(',')[0].split(' ')[0]) + (p.condicao.indexOf(',') >= 0 ? ' +' : '') : 'Geral') + '</span>' +
     '</div>'
   ).join('');
   document.getElementById('totalPacientes').textContent = pacientes.length;
@@ -1491,7 +1499,7 @@ function renderVerPaciente(id) {
   html2 += '<div style="background:var(--cinza);border-radius:12px;padding:12px;margin-bottom:12px;">';
   if (p.end) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">📍 ' + p.end + '</div>';
   if (p.tel) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">📱 <a href="tel:' + esc(p.tel) + '" style="color:var(--verde);">' + p.tel + '</a></div>';
-  if (p.condicao) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">🏥 ' + p.condicao + '</div>';
+  if (p.condicao) html2 += '<div style="font-size:13px;font-weight:600;padding:4px 0;">🏥 ' + esc(p.condicao) + '</div>';
   html2 += '</div>';
 
   // REMÉDIOS INDIVIDUAIS
@@ -1997,7 +2005,7 @@ function renderListaPessoas(containerId) {
       '<div style="width:46px;height:46px;border-radius:50%;background:' + (isPrincipal ? 'var(--verde)' : '#e0f2fe') + ';display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">' + (isPrincipal ? '⭐' : '👤') + '</div>' +
       '<div style="flex:1;">' +
         '<div style="font-size:15px;font-weight:800;">' + p.nome + (isPrincipal ? ' <span style="font-size:12px;background:var(--verde);color:white;border-radius:6px;padding:2px 7px;">Você</span>' : '') + '</div>' +
-        '<div style="font-size:13px;color:var(--cinza-texto);font-weight:600;margin-top:2px;">' + (p.relacao || '') + (p.idade ? ' · ' + p.idade : '') + (p.condicao ? ' · ' + p.condicao : '') + '</div>' +
+        '<div style="font-size:13px;color:var(--cinza-texto);font-weight:600;margin-top:2px;">' + (p.relacao || '') + (p.idade ? ' · ' + p.idade : '') + (p.condicao ? ' · ' + esc(p.condicao) : '') + '</div>' +
         '<div style="font-size:13px;color:var(--verde);font-weight:700;margin-top:3px;">💊 ' + remCount + ' remédio' + (remCount !== 1 ? 's' : '') + '  📅 ' + consCount + ' consulta' + (consCount !== 1 ? 's' : '') + '</div>' +
       '</div>' +
       '<span style="font-size:20px;color:var(--cinza-texto);">›</span>' +
@@ -2105,7 +2113,7 @@ function renderVerPessoa(id) {
   h += '<div style="flex:1;">';
   h += '<div style="font-size:18px;font-weight:900;">' + p.nome + (p.principal ? ' <span style="font-size:13px;background:var(--verde);color:white;border-radius:6px;padding:2px 8px;">Responsável</span>' : '') + '</div>';
   if (p.relacao) h += '<div style="font-size:12px;color:var(--verde);font-weight:700;">' + p.relacao + '</div>';
-  if (p.condicao) h += '<div style="font-size:12px;color:var(--cinza-texto);">🏥 ' + p.condicao + '</div>';
+  if (p.condicao) h += '<div style="font-size:12px;color:var(--cinza-texto);">🏥 ' + esc(p.condicao) + '</div>';
   if (p.nascimento) { var dn=new Date(p.nascimento+'T12:00:00'); h += '<div style="font-size:12px;color:var(--cinza-texto);">🎂 ' + dn.toLocaleDateString('pt-BR') + ' (' + Math.floor((new Date()-dn)/(365.25*24*3600*1000)) + ' anos)</div>'; }
   if (p.tel) h += '<a href="tel:' + esc(p.tel) + '" style="font-size:12px;color:#2563eb;font-weight:700;display:block;">📱 ' + p.tel + '</a>';
   h += '</div></div>';
@@ -2979,5 +2987,65 @@ setTimeout(function() {
 </div>
 
 
+<script>
+/* Condições de saúde com várias opções: troca a lista de escolha única por botões que marcam e desmarcam.
+   O valor continua um texto só, separado por vírgula (ex.: "Hipertensão, Diabetes Tipo 2"), compatível com o que já estava salvo. */
+(function () {
+  function separar(v) { return String(v || '').split(/\s*[,;]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function montar(id) {
+    var sel = document.getElementById(id);
+    if (!sel || sel.tagName !== 'SELECT') return;
+    var grupos = [], soltas = [];
+    Array.prototype.forEach.call(sel.children, function (ch) {
+      if (ch.tagName === 'OPTGROUP') grupos.push({ nome: ch.label, ops: Array.prototype.map.call(ch.children, function (o) { return o.textContent.trim(); }) });
+      else if (ch.tagName === 'OPTION' && ch.value !== '' && ch.textContent.trim()) soltas.push(ch.textContent.trim());
+    });
+    if (soltas.length) grupos.push({ nome: grupos.length ? 'Outras' : '', ops: soltas });
+    // combinações e "Outra" deixam de ser necessárias: dá para marcar várias
+    grupos.forEach(function (g) { g.ops = g.ops.filter(function (o) { return !/\+|múltiplas|^outra$|^outras$/i.test(o); }); });
+    var todas = []; grupos.forEach(function (g) { todas = todas.concat(g.ops); });
+
+    var caixa = document.createElement('div'); caixa.className = 'cond-multi';
+    caixa.innerHTML = '<div class="cm-sel"></div><div class="cm-lista">' + grupos.filter(function (g) { return g.ops.length; }).map(function (g) {
+      return (g.nome ? '<div class="cm-grupo">' + esc(g.nome) + '</div>' : '') + '<div class="cm-chips">' +
+        g.ops.map(function (o) { return '<button type="button" class="cm-chip" data-op="' + esc(o) + '">' + esc(o) + '</button>'; }).join('') + '</div>';
+    }).join('') + '</div><input type="text" class="cm-outra" maxlength="120" placeholder="Outra condição (se tiver mais de uma, separe por vírgula)">';
+    var oculto = document.createElement('input'); oculto.type = 'hidden';
+    sel.parentNode.replaceChild(caixa, sel);
+    caixa.appendChild(oculto); oculto.id = id;
+    var marcadas = [];
+    var outra = caixa.querySelector('.cm-outra');
+    function escrever() {
+      var extras = separar(outra.value).filter(function (x) { return marcadas.indexOf(x) < 0; });
+      var lista = marcadas.concat(extras);
+      valorReal = lista.join(', ');
+      caixa.querySelector('.cm-sel').textContent = lista.length ? '✅ ' + lista.length + ' selecionada' + (lista.length > 1 ? 's' : '') + ': ' + valorReal : 'Toque para marcar uma ou mais condições';
+      caixa.querySelectorAll('.cm-chip').forEach(function (b) { b.classList.toggle('on', marcadas.indexOf(b.getAttribute('data-op')) >= 0); });
+    }
+    var valorReal = '';
+    Object.defineProperty(oculto, 'value', {
+      get: function () { return valorReal; },
+      set: function (v) {
+        var itens = separar(v);
+        marcadas = itens.filter(function (x) { return todas.indexOf(x) >= 0; });
+        outra.value = itens.filter(function (x) { return todas.indexOf(x) < 0; }).join(', ');
+        escrever();
+      }
+    });
+    caixa.addEventListener('click', function (e) {
+      var b = e.target.closest('.cm-chip'); if (!b) return;
+      var op = b.getAttribute('data-op'), i = marcadas.indexOf(op);
+      var nenhuma = /^sem condi/i;
+      if (i >= 0) marcadas.splice(i, 1);
+      else if (nenhuma.test(op)) { marcadas = [op]; outra.value = ''; }        // "Sem condição crônica" exclui as outras
+      else { marcadas = marcadas.filter(function (x) { return !nenhuma.test(x); }); marcadas.push(op); }
+      escrever();
+    });
+    outra.addEventListener('input', escrever);
+    escrever();
+  }
+  ['pCondicao', 'npCondicao', 'epCondicao'].forEach(montar);
+})();
+</script>
 </body>
 </html>
