@@ -1793,6 +1793,15 @@ async function pesquisarOnline() {
 
 function perguntaRapida(txt) { document.getElementById('iaInput').value = txt; enviarIA(); }
 
+// Sem IA: fica só com as linhas da receita que parecem remédio (dose em mg/ml, comprimido, gotas...)
+function filtrarLinhasRemedio(texto) {
+  const dose = /\d+([.,]\d+)?\s*(mg|mcg|µg|g|ml|ui|%)(?![a-z])/i;
+  const forma = /(comprimido|cp\b|c[áa]psula|gotas|xarope|pomada|creme|spray|sol(u[çc][ãa]o)?\b|suspens[ãa]o|ampola|injet[áa]vel|sach[êe]|adesivo|col[íi]rio|inalat)/i;
+  const ignora = /(crm|dr\.|dra\.|m[ée]dic|paciente|endere[çc]o|rua |av\.|avenida|cep|tel|fone|cpf|rg\b|data|assinatura|carimbo|receitu[áa]rio|unidade|ubs|hospital|cl[íi]nica|^uso |^via |^tomar|^usar|^aplicar|^ingerir|^pingar|^dar )/i;
+  const linhas = String(texto || '').split(/\r?\n/).map(function(l) { return l.replace(/^[\s\-•*\d.)]+(?=[A-Za-zÀ-ú])/, '').replace(/[_.\-]{3,}.*$/, '').trim(); })
+    .filter(function(l) { return l.length > 3 && l.length < 70 && (dose.test(l) || forma.test(l)) && !ignora.test(l); });
+  return linhas.slice(0, 12).join('\n');
+}
 async function previewReceitaFoto(input) {
   if (!input.files || !input.files[0]) return;
   const reader = new FileReader();
@@ -1827,9 +1836,10 @@ async function previewReceitaFoto(input) {
       }
       // PASSO 2: Groq filtra ANTES de mostrar no campo (só com permissão)
       if (!pedirConsentimentoIA()) {
-        document.getElementById('receitaTextoInput').value = textoLido;
+        const filtrado = filtrarLinhasRemedio(textoLido);
+        document.getElementById('receitaTextoInput').value = filtrado || textoLido;
         status.style.background = '#fff3e8'; status.style.color = '#c2410c';
-        status.textContent = '✅ Texto lido no próprio aparelho. Apague o que não for remédio antes de continuar.';
+        status.textContent = filtrado ? '✅ Separei as linhas que parecem remédio. Confira antes de continuar.' : '✅ Texto lido no próprio aparelho. Apague o que não for remédio antes de continuar.';
         return;
       }
       status.style.background = '#e0f2fe'; status.style.color = '#0369a1';
@@ -1848,10 +1858,11 @@ async function previewReceitaFoto(input) {
           status.textContent = '✅ ' + medicamentosTexto.split('\n').filter(l => l.trim()).length + ' medicamento(s) identificado(s)! Confira e clique em Adicionar.';
         }
       } catch(errGroq) {
-        // Se Groq falhar, mostra texto bruto com aviso
-        document.getElementById('receitaTextoInput').value = textoLido;
+        // Se a IA falhar, separa no próprio aparelho as linhas que parecem remédio
+        const filtrado = filtrarLinhasRemedio(textoLido);
+        document.getElementById('receitaTextoInput').value = filtrado || textoLido;
         status.style.background = '#fff3e8'; status.style.color = '#c2410c';
-        status.textContent = '⚠️ Texto lido! Apague o que não for remédio antes de clicar em Adicionar.';
+        status.textContent = filtrado ? '⚠️ A IA não respondeu. Separei as linhas que parecem remédio: confira antes de clicar em Adicionar.' : '⚠️ Texto lido! Apague o que não for remédio antes de clicar em Adicionar.';
       }
     } catch(err) {
       progWrap.style.display = 'none';

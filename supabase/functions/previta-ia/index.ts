@@ -6,7 +6,6 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const ORIGENS = ["https://previta-app.github.io", "https://fosterfcs.github.io"];
-const MODELOS = ["llama-3.3-70b-versatile", "openai/gpt-oss-120b", "openai/gpt-oss-20b", "llama-3.1-8b-instant"];
 const LIMITE_HORA = 40;
 
 function cors(req: Request) {
@@ -38,25 +37,50 @@ async function hash(s: string) {
   return Array.from(new Uint8Array(d)).slice(0, 16).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+// Modelos de texto: a Groq troca os modelos com frequência, então a lista vem da própria Groq (guardada por 1 hora)
+const PREFERIDOS = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "llama-3.3-70b-versatile", "qwen/qwen3-32b", "llama-3.1-8b-instant"];
+let cacheModelos: { quando: number; ids: string[] } | null = null;
+async function modelosDisponiveis(chave: string): Promise<string[]> {
+  if (cacheModelos && Date.now() - cacheModelos.quando < 3600_000) return cacheModelos.ids;
+  try {
+    const r = await fetch("https://api.groq.com/openai/v1/models", { headers: { Authorization: `Bearer ${chave}` } });
+    if (r.ok) {
+      const todos: string[] = ((await r.json())?.data || []).filter((m: any) => m?.active !== false).map((m: any) => String(m.id));
+      const texto = todos.filter((id) => !/whisper|tts|guard|playai|orpheus|distil|compound|prompt-guard|safeguard/i.test(id));
+      const ordem = [...PREFERIDOS.filter((id) => texto.includes(id)), ...texto.filter((id) => !PREFERIDOS.includes(id))];
+      console.log(JSON.stringify({ diag: "modelos_groq", ordem: ordem.slice(0, 12) }));
+      if (ordem.length) { cacheModelos = { quando: Date.now(), ids: ordem }; return ordem; }
+    } else console.log(JSON.stringify({ diag: "lista_modelos_erro", status: r.status }));
+  } catch (e) { console.log(JSON.stringify({ diag: "lista_modelos_falhou", erro: String(e).slice(0, 120) })); }
+  return PREFERIDOS;
+}
+
 async function chamarIA(chave: string, sistema: string, texto: string, maxTokens: number) {
   let ultimo = "";
-  for (const modelo of MODELOS) {
-    const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${chave}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: modelo, temperature: 0.2, max_completion_tokens: maxTokens,
-        messages: [{ role: "system", content: sistema }, { role: "user", content: texto }] }),
-    });
-    const t = await r.text();
-    if (r.ok) {
-      const c = (JSON.parse(t)?.choices?.[0]?.message?.content || "").replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
-      if (c) return { ok: true, texto: c, modelo };
-      ultimo = `${modelo}: resposta vazia`; continue;
+  const modelos = (await modelosDisponiveis(chave)).slice(0, 6);
+  for (const modelo of modelos) {
+    const raciocina = /gpt-oss|qwen3|deepseek|r1/i.test(modelo);
+    for (const extras of raciocina ? [true, false] : [false]) {
+      const corpo: Record<string, unknown> = { model: modelo, temperature: 0.2, max_completion_tokens: raciocina ? Math.max(maxTokens * 4, 2500) : maxTokens,
+        messages: [{ role: "system", content: sistema }, { role: "user", content: texto }] };
+      if (extras) { if (/gpt-oss/i.test(modelo)) corpo.reasoning_effort = "low"; else corpo.reasoning_format = "hidden"; }
+      const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST", headers: { Authorization: `Bearer ${chave}`, "Content-Type": "application/json" }, body: JSON.stringify(corpo),
+      });
+      const t = await r.text();
+      if (r.ok) {
+        const c = (JSON.parse(t)?.choices?.[0]?.message?.content || "").replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+        if (c) return { ok: true, texto: c, modelo };
+        ultimo = `${modelo}: resposta vazia`;
+        console.log(JSON.stringify({ diag: "groq_vazio", modelo }));
+        break;
+      }
+      ultimo = `${modelo} ${r.status}: ${t.slice(0, 200)}`;
+      console.log(JSON.stringify({ diag: "groq_erro", modelo, status: r.status, corpo: t.slice(0, 300) }));
+      if (r.status === 401 || r.status === 429) return { ok: false, motivo: r.status === 401 ? "chave" : "ocupada", detalhe: ultimo };
+      if (r.status === 400 && extras) continue; // parâmetro de raciocínio não aceito: tenta sem
+      break; // modelo indisponível: tenta o próximo
     }
-    ultimo = `${modelo} ${r.status}: ${t.slice(0, 200)}`;
-    console.log(JSON.stringify({ diag: "groq_erro", modelo, status: r.status, corpo: t.slice(0, 300) }));
-    if (r.status === 401 || r.status === 429) return { ok: false, motivo: r.status === 401 ? "chave" : "ocupada", detalhe: ultimo };
-    // 400/404 de modelo indisponível: tenta o próximo
   }
   return { ok: false, motivo: "ia", detalhe: ultimo };
 }
