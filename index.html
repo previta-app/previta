@@ -396,8 +396,10 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
     </div>
     <div class="card">
       <div class="card-titulo">🔔 Alertas</div>
-      <p style="font-size:13px;color:var(--cinza-texto);font-weight:600;margin-bottom:10px;">Na hora do remédio o app toca uma melodia, vibra e mostra uma notificação no celular. Deixe o PREVITA <strong>aberto ou minimizado</strong>. Se ele for fechado, os remédios atrasados aparecem assim que você abrir.</p>
+      <p style="font-size:13px;color:var(--cinza-texto);font-weight:600;margin-bottom:10px;">Na hora do remédio o app toca uma melodia, vibra e mostra uma notificação no celular. Com as notificações ativadas, o aviso <strong>chega mesmo com o PREVITA fechado</strong> (no iPhone, instale o app na Tela de Início). Ao abrir, você vê qual remédio tomar.</p>
       <button class="btn-verde" id="btnNotif" onclick="ativarNotificacoes()" style="width:100%;margin-bottom:8px;">🔔 Ativar notificações</button>
+      <div id="statusPush" style="display:none;font-size:13px;font-weight:700;border-radius:10px;padding:8px 10px;margin-bottom:8px;"></div>
+      <button class="btn-verde" id="btnTestePush" onclick="testarAvisoFechado()" style="width:100%;margin-bottom:8px;display:none;background:#0f5132;">📲 Testar aviso com o app fechado</button>
       <button class="btn-laranja" onclick="testarSom()" style="width:100%;">🔊 Testar Som e Vibração</button>
     </div>
   </div>
@@ -607,7 +609,7 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
     <h2>🔒 Privacidade</h2>
     <div style="font-size:14px;line-height:1.6;color:var(--texto);">
       <p><strong>Onde ficam seus dados?</strong><br>Remédios, consultas, pessoas e contatos ficam guardados <strong>só neste aparelho</strong>. O PREVITA não tem cadastro, login nem banco de dados com suas informações.</p>
-      <p style="margin-top:10px;"><strong>O que sai do aparelho?</strong><br>Só quando você usa a <strong>leitura de receita por IA</strong> ou a <strong>pesquisa online do PREV</strong>: o texto da receita ou da pergunta é enviado para processamento por inteligência artificial (servidores Supabase, Cloudflare e Groq, que podem ficar fora do Brasil). Seu nome e seu perfil não são enviados. Antes do primeiro uso, o app pede sua permissão.</p>
+      <p style="margin-top:10px;"><strong>O que sai do aparelho?</strong><br>Só quando você usa a <strong>leitura de receita por IA</strong> ou a <strong>pesquisa online do PREV</strong>: o texto da receita ou da pergunta é enviado para processamento por inteligência artificial (servidores Supabase, Cloudflare e Groq, que podem ficar fora do Brasil). Com as notificações ativadas, o servidor também guarda <strong>só os horários</strong> dos remédios (ex.: 08:00) e o endereço de entrega das notificações deste celular, para avisar com o app fechado. O nome do remédio e a doença não são enviados. Para parar, desative as notificações do PREVITA nas configurações do celular. Seu nome e seu perfil não são enviados. Antes do primeiro uso, o app pede sua permissão.</p>
       <p style="margin-top:10px;"><strong>Contador de acessos</strong><br>O app conta quantas vezes foi aberto, sem identificar quem abriu.</p>
       <p style="margin-top:10px;"><strong>Seus direitos (LGPD – Lei 13.709/2018)</strong><br>Você pode apagar tudo a qualquer momento no botão abaixo. Dúvidas: <a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--verde);font-weight:800;">previta@fosterconstrucoes.com.br</a></p>
       <p style="margin-top:10px;font-size:12px;color:var(--cinza-texto);">O PREVITA ajuda a organizar remédios e consultas. Ele não substitui a orientação do médico, do enfermeiro ou do farmacêutico.</p>
@@ -2352,6 +2354,7 @@ function ativarNotificacoes() {
     if (p === 'granted') {
       notificar('PREVITA', 'Pronto! Você vai receber os avisos de remédio aqui.', 'previta-teste');
       mostrarToast('✅ Notificações ativadas!');
+      sincronizarPush(true);
     }
   });
 }
@@ -2376,6 +2379,93 @@ function notificarAlerta(a) {
       'cons_' + c.id);
   }
 }
+
+
+// ===== AVISO COM O APP FECHADO (Web Push) =====
+// O servidor guarda só os HORÁRIOS (ex.: 08:00, 20:00) e o endereço de entrega deste celular.
+// Nome do remédio, dose e doença nunca saem do aparelho: o aviso diz "Hora do remédio" e o app mostra o resto ao abrir.
+const PUSH_URL = 'https://fvsdlpnvqfvjdxmfgbjx.supabase.co/functions/v1/previta-push';
+const VAPID_PUBLICA = 'BBCSU5aZ6vXlIymcKmzy-qdSeLP_a5eT8GmGLW6-WbhDlYbxaJNFCL-v1GjjivUzwO8MI1CFoixIkkCuP5V3Aig';
+function pushSuportado() { return 'serviceWorker' in navigator && 'PushManager' in window && notificacaoSuportada(); }
+function idDispositivo() {
+  var id = localStorage.getItem('pv_dispositivo');
+  if (!id) {
+    var a = new Uint8Array(18); (window.crypto || {}).getRandomValues ? crypto.getRandomValues(a) : a.forEach(function(_, i) { a[i] = Math.random() * 256; });
+    id = btoa(String.fromCharCode.apply(null, a)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    localStorage.setItem('pv_dispositivo', id);
+  }
+  return id;
+}
+function chaveVapid() {
+  var b = VAPID_PUBLICA.replace(/-/g, '+').replace(/_/g, '/'); b += '='.repeat((4 - b.length % 4) % 4);
+  var raw = atob(b), out = new Uint8Array(raw.length);
+  for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+  return out;
+}
+function horariosParaAviso() {
+  var h = {};
+  try { coletarDosesDoDia().forEach(function(d) { if (/^\d{2}:\d{2}$/.test(d.hora)) h[d.hora] = true; }); } catch (e) {}
+  return Object.keys(h).sort();
+}
+function mostrarStatusPush(txt, ok) {
+  var el = document.getElementById('statusPush'), bt = document.getElementById('btnTestePush');
+  if (!el) return;
+  el.style.display = txt ? 'block' : 'none'; el.textContent = txt || '';
+  el.style.background = ok ? '#e8f5ee' : '#fff3e8'; el.style.color = ok ? '#1a7a4a' : '#c2410c';
+  if (bt) bt.style.display = ok ? 'block' : 'none';
+}
+var _pushEmAndamento = null;
+async function sincronizarPush(forcar) {
+  if (!pushSuportado() || Notification.permission !== 'granted') { mostrarStatusPush('', false); return 'sem'; }
+  if (_pushEmAndamento) return _pushEmAndamento;
+  _pushEmAndamento = (async function() {
+    try {
+      var reg = swReg || await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: chaveVapid() });
+      var horarios = horariosParaAviso();
+      var fuso = (Intl.DateTimeFormat().resolvedOptions().timeZone) || 'America/Sao_Paulo';
+      var assinatura = sub.toJSON();
+      var marca = JSON.stringify([assinatura.endpoint, horarios, fuso]);
+      var ultima = parseInt(localStorage.getItem('pv_push_quando') || '0', 10);
+      if (!forcar && marca === localStorage.getItem('pv_push_marca') && Date.now() - ultima < 3 * 86400000) {
+        mostrarStatusPush('📲 Aviso com o app fechado: ativado (' + horarios.length + ' horário' + (horarios.length === 1 ? '' : 's') + ').', true);
+        return 'ok';
+      }
+      var r = await fetch(PUSH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'registrar', dispositivo: idDispositivo(), assinatura: assinatura, horarios: horarios, fuso: fuso }) });
+      if (!r.ok) throw new Error('servidor ' + r.status);
+      localStorage.setItem('pv_push_marca', marca); localStorage.setItem('pv_push_quando', String(Date.now()));
+      mostrarStatusPush('📲 Aviso com o app fechado: ativado (' + horarios.length + ' horário' + (horarios.length === 1 ? '' : 's') + ').', true);
+      return 'ok';
+    } catch (e) {
+      console.warn('push', e);
+      mostrarStatusPush('⚠️ Não consegui ativar o aviso com o app fechado agora. Ele tenta de novo quando você abrir o app com internet.', false);
+      return 'erro';
+    } finally { _pushEmAndamento = null; }
+  })();
+  return _pushEmAndamento;
+}
+async function testarAvisoFechado() {
+  var st = await sincronizarPush(true);
+  if (st !== 'ok') { alert('Ative as notificações primeiro (botão acima).'); return; }
+  try {
+    var r = await fetch(PUSH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: 'teste', dispositivo: idDispositivo() }) });
+    var d = await r.json().catch(function() { return {}; });
+    if (r.ok) alert('✅ Aviso de teste enviado!\n\nAgora feche o PREVITA (tire da lista de apps abertos). Em alguns segundos deve chegar a notificação "Teste do PREVITA".\n\nSe não chegar, confira se as notificações do navegador/app estão permitidas nas configurações do celular.');
+    else alert('⚠️ ' + (d.erro || 'Não foi possível enviar o teste agora.'));
+  } catch (e) { alert('⚠️ Sem internet. Tente de novo.'); }
+}
+// Sempre que a lista de remédios mudar, atualiza os horários do aviso (com uma pequena espera)
+(function() {
+  var original = Storage.prototype.setItem, espera = null;
+  Storage.prototype.setItem = function(k, v) {
+    original.apply(this, arguments);
+    if (this === window.localStorage && /^pv_remedios/.test(String(k))) {
+      clearTimeout(espera); espera = setTimeout(function() { sincronizarPush(false); }, 2500);
+    }
+  };
+})();
 
 // ===== ATUALIZAÇÃO E FUNCIONAMENTO OFFLINE =====
 var swReg = null, recarregandoApp = false;
@@ -2402,6 +2492,8 @@ function registrarServiceWorker() {
   });
   navigator.serviceWorker.register('sw.js').then(function(reg) {
     swReg = reg;
+    navigator.serviceWorker.ready.then(function() { sincronizarPush(false); });
+    navigator.serviceWorker.addEventListener('message', function(ev) { if (ev.data && ev.data.tipo === 'push') verificarAlertas(); });
     if (reg.waiting && navigator.serviceWorker.controller) mostrarBannerAtualizacao(reg.waiting);
     reg.addEventListener('updatefound', function() {
       var w = reg.installing; if (!w) return;
@@ -2412,6 +2504,7 @@ function registrarServiceWorker() {
     setInterval(function() { reg.update().catch(function(){}); }, 30 * 60 * 1000);
     document.addEventListener('visibilitychange', function() {
       if (document.visibilityState === 'visible') { reg.update().catch(function(){}); verificarAlertas(); }
+      else sincronizarPush(false);
     });
   }).catch(function() {});
 }

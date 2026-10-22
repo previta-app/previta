@@ -1,10 +1,10 @@
 /* PREVITA – Service Worker
  * - Funciona offline (guarda o app no aparelho)
  * - Sempre busca a versão nova quando há internet
- * - Mostra as notificações de remédio e consulta
+ * - Mostra as notificações de remédio e consulta (também com o app fechado, via Web Push)
  * Ao publicar uma nova versão, aumente o número abaixo.
  */
-const VERSAO = 'previta-v7';
+const VERSAO = 'previta-v8';
 const ARQUIVOS = ['./index.html', './manifest.json', './icon.png', './previta-icon.svg'];
 const EXTERNOS_OK = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdnjs.cloudflare.com'];
 
@@ -79,6 +79,30 @@ self.addEventListener('fetch', function (e) {
       })
     );
   }
+});
+
+// Aviso enviado pelo servidor na hora do remédio (chega mesmo com o app fechado).
+// O aviso só traz o horário; nome e dose do remédio ficam no aparelho e aparecem ao abrir o app.
+self.addEventListener('push', function (e) {
+  var d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (err) { d = { corpo: e.data ? e.data.text() : '' }; }
+  var titulo = d.titulo || '💊 PREVITA';
+  var opts = {
+    body: d.corpo || 'Abra o PREVITA para ver seus remédios.',
+    tag: 'previta-push-' + (d.hora || d.tipo || 'aviso'),
+    renotify: true, requireInteraction: true,
+    icon: 'icon.png', badge: 'icon.png', vibrate: [400, 100, 400, 100, 600],
+    data: { hora: d.hora || '' }
+  };
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (lista) {
+      // com o app aberto na tela, o alarme do próprio app já toca: só avisa a página
+      var visivel = lista.some(function (cl) { return cl.visibilityState === 'visible'; });
+      lista.forEach(function (cl) { cl.postMessage({ tipo: 'push', hora: d.hora || '' }); });
+      if (visivel && d.tipo === 'remedio') return;
+      return self.registration.showNotification(titulo, opts);
+    })
+  );
 });
 
 // Toque na notificação: abre (ou traz para frente) o PREVITA
