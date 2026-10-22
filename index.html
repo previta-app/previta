@@ -231,6 +231,12 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
 .cond-multi .cm-chip{border:2px solid #d1d5db;background:#f9fafb;color:#374151;border-radius:999px;padding:6px 11px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;}
 .cond-multi .cm-chip.on{background:var(--verde);border-color:var(--verde);color:#fff;}
 .cond-multi .cm-outra{margin-top:10px;width:100%;}
+.card-indicar{display:flex;align-items:center;gap:12px;line-height:1.35;background:linear-gradient(135deg,#1a7a4a,#22995c);color:#fff;border-radius:18px;padding:14px 16px;margin:0 0 14px;text-align:left;}
+.card-indicar button{background:#fff;color:#1a7a4a;border:none;border-radius:12px;padding:10px 14px;font-weight:900;font-size:14px;font-family:inherit;cursor:pointer;white-space:nowrap;}
+#sugestaoIndicar{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:8500;display:flex;align-items:flex-end;justify-content:center;}
+#sugestaoIndicar .sug-caixa{background:#fff;border-radius:24px 24px 0 0;padding:22px 20px calc(18px + env(safe-area-inset-bottom));width:100%;max-width:480px;text-align:center;}
+#sugestaoIndicar .sug-depois,#sugestaoIndicar .sug-nunca{display:block;width:100%;background:none;border:none;font-family:inherit;font-weight:800;font-size:15px;color:#4b5563;padding:12px;cursor:pointer;}
+#sugestaoIndicar .sug-nunca{font-size:13px;color:#9ca3af;padding-top:0;}
 </style>
 </head>
 <body>
@@ -1304,6 +1310,7 @@ function marcarTodos(id) {
   (r.horarios || []).forEach(h => { if (todos) delete tomadosHoje[id + '_' + h]; else tomadosHoje[id + '_' + h] = true; });
   localStorage.setItem('pv_tomados_' + hoje(), JSON.stringify(tomadosHoje));
   renderRemedios(); atualizarHeader();
+  if (!todos) talvezSugerirIndicacao();
 }
 
 function atualizarStats() {
@@ -1410,9 +1417,11 @@ function renderAgenda() {
   document.getElementById('progrMsg').textContent = total === 0 ? 'Cadastre seus remédios!' : tom === total ? '🎉 Todos tomados hoje!' : tom === 0 ? '💪 Vamos começar!' : 'Faltam ' + (total-tom) + ' dose' + (total-tom > 1 ? 's' : '') + ' para completar';
 }
 function marcarItem(key) {
+  var marcou = !tomadosHoje[key];
   if (tomadosHoje[key]) delete tomadosHoje[key]; else tomadosHoje[key] = true;
   localStorage.setItem('pv_tomados_' + hoje(), JSON.stringify(tomadosHoje));
   renderAgenda(); renderRemedios(); atualizarHeader();
+  if (marcou) talvezSugerirIndicacao();
 }
 
 function lerAlertasConsulta() {
@@ -2554,6 +2563,7 @@ function confirmarTomado(key) {
   var m = document.getElementById('modalAlerta'); if (m) m.remove();
   renderRemedios(); atualizarHeader(); atualizarDashboard(); mostrarToast('✅ Remédio marcado como tomado!');
   mostrarProximoAlerta();
+  if (!filaAlertas || !filaAlertas.length) talvezSugerirIndicacao();
 }
 
 window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); deferredPrompt = e; });
@@ -2680,12 +2690,60 @@ const DIVULGACAO = {
   instagram: 'https://instagram.com/foster.engenharia',
   site: 'https://www.fosterconstrucoes.com.br'
 };
+
+// ===== INDICAR PARA A FAMÍLIA (divulgação boca a boca) =====
+const LINK_PREVITA = 'https://previta-app.github.io/previta/';
+const TEXTO_INDICACAO = '💊 Uso o *PREVITA* para não esquecer os remédios e as consultas.\n\n' +
+  '✅ Grátis e sem cadastro\n🔔 Avisa na hora do remédio, até com o app fechado\n📷 Lê a receita pela foto\n👵 Dá para cuidar dos remédios dos pais e avós\n\n' +
+  'Instale aqui: ' + LINK_PREVITA;
+function indicarPrevita(origem) {
+  try { localStorage.setItem('pv_indicacoes', String(parseInt(localStorage.getItem('pv_indicacoes') || '0', 10) + 1)); } catch (e) {}
+  fecharSugestaoIndicacao();
+  if (navigator.share) {
+    navigator.share({ title: 'PREVITA – Prevenção + Vida', text: TEXTO_INDICACAO.replace(' ' + LINK_PREVITA, ''), url: LINK_PREVITA })
+      .then(function() { mostrarToast('💚 Obrigado por indicar o PREVITA!'); }).catch(function() {});
+    return;
+  }
+  window.open('https://wa.me/?text=' + encodeURIComponent(TEXTO_INDICACAO), '_blank');
+}
+function htmlCardIndicar() {
+  return '<div class="card-indicar"><div style="font-size:30px;">💚</div><div style="flex:1;">' +
+    '<div style="font-weight:900;font-size:15px;">Gostou do PREVITA?</div>' +
+    '<div style="font-size:13px;font-weight:600;opacity:.9;">Indique para alguém da família que também toma remédio. É grátis.</div></div>' +
+    '<button onclick="indicarPrevita(\'cartao\')">📲 Indicar</button></div>';
+}
+// Depois de algumas doses marcadas, sugere indicar (no máximo a cada 14 dias; some se a pessoa pedir)
+function talvezSugerirIndicacao() {
+  try {
+    var n = parseInt(localStorage.getItem('pv_doses_marcadas') || '0', 10) + 1;
+    localStorage.setItem('pv_doses_marcadas', String(n));
+    if (n < 3 || localStorage.getItem('pv_indicar_nunca') === '1') return;
+    var ultima = parseInt(localStorage.getItem('pv_indicar_quando') || '0', 10);
+    if (Date.now() - ultima < 14 * 86400000) return;
+    localStorage.setItem('pv_indicar_quando', String(Date.now()));
+    setTimeout(mostrarSugestaoIndicacao, 1200);
+  } catch (e) {}
+}
+function mostrarSugestaoIndicacao() {
+  if (document.getElementById('sugestaoIndicar') || document.getElementById('modalAlerta')) return;
+  var d = document.createElement('div'); d.id = 'sugestaoIndicar';
+  d.innerHTML = '<div class="sug-caixa"><div style="font-size:40px;">💚</div>' +
+    '<div style="font-size:18px;font-weight:900;margin:6px 0;">Muito bem! Mais uma dose em dia.</div>' +
+    '<div style="font-size:15px;font-weight:600;color:var(--cinza-texto);margin-bottom:14px;">Conhece alguém que também precisa lembrar dos remédios? Mande o PREVITA para a família, é grátis.</div>' +
+    '<button class="btn-verde" style="background:#25D366;" onclick="indicarPrevita(\'sugestao\')">📲 Indicar pelo WhatsApp</button>' +
+    '<button class="sug-depois" onclick="fecharSugestaoIndicacao()">Agora não</button>' +
+    '<button class="sug-nunca" onclick="localStorage.setItem(\'pv_indicar_nunca\',\'1\');fecharSugestaoIndicacao()">Não mostrar de novo</button></div>';
+  d.addEventListener('click', function(e) { if (e.target === d) fecharSugestaoIndicacao(); });
+  document.body.appendChild(d);
+}
+function fecharSugestaoIndicacao() { var d = document.getElementById('sugestaoIndicar'); if (d) d.remove(); }
+
 function htmlRodape(comAnuncio) {
   const assinatura = '<strong>Desenvolvido por Wilson Foster</strong><br>Agente de Saúde | Engenheiro Civil';
   const contatoApp = '<a href="https://previta-app.github.io/previta" target="_blank">previta-app.github.io/previta</a><br>' +
     '<a href="mailto:previta@fosterconstrucoes.com.br">previta@fosterconstrucoes.com.br</a>';
   if (DIVULGACAO.ativo && comAnuncio) {
-    return '<div class="anuncio"><div class="an-selo">' + DIVULGACAO.selo + '</div>' +
+    return htmlCardIndicar() + '<div class="anuncio"><div class="an-selo">' + DIVULGACAO.selo + '</div>' +
       (DIVULGACAO.slogan ? '<div class="an-slogan">' + DIVULGACAO.slogan + '</div>' : '') +
       '<div class="an-tit">' + DIVULGACAO.titulo + '</div>' +
       '<div class="an-sub">' + DIVULGACAO.servicos + '<br>' + DIVULGACAO.registro + '</div>' +
@@ -2697,7 +2755,7 @@ function htmlRodape(comAnuncio) {
       '<div class="an-assina">' + assinatura + '<div class="an-links">' + contatoApp + '</div></div>' +
       '</div>';
   }
-  return assinatura + '<br><span class="rod-links">' + contatoApp + '</span>';
+  return (comAnuncio ? htmlCardIndicar() : '') + assinatura + '<br><span class="rod-links">' + contatoApp + '</span>';
 }
 function renderRodapes() {
   document.querySelectorAll('.rodape').forEach(function(el) {
