@@ -4,7 +4,7 @@
  * - Mostra as notificações de remédio e consulta (também com o app fechado, via Web Push)
  * Ao publicar uma nova versão, aumente o número abaixo.
  */
-const VERSAO = 'previta-v10';
+const VERSAO = 'previta-v11';
 const ARQUIVOS = ['./index.html', './manifest.json', './icon.png', './previta-icon.svg'];
 const EXTERNOS_OK = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdnjs.cloudflare.com'];
 

@@ -651,7 +651,7 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
         <div class="periodo-box noite" id="periodoNoite" onclick="selecionarPeriodo('noite')"><span class="periodo-icon">🌙</span><span class="periodo-label">Noite</span><span class="periodo-hora">18h–22h</span></div>
       </div>
     </div>
-    <div class="campo"><label>Horários <span style="font-weight:600;color:var(--cinza-texto);">(ajuste se precisar)</span></label><div class="horarios-grid" id="horariosGrid"></div><div class="hora-livre"><input type="time" id="mHoraLivre"><button type="button" onclick="adicionarHoraLivre('m')">➕ Outro horário</button></div></div>
+    <div class="campo"><label>Horários <span style="font-weight:600;color:var(--cinza-texto);">(ajuste se precisar)</span></label><div class="horarios-grid" id="horariosGrid"></div><div class="hora-livre"><input type="time" id="mHoraLivre" onchange="if(this.value)adicionarHoraLivre('m')"><button type="button" onclick="adicionarHoraLivre('m')">➕ Outro horário</button></div></div>
     <div class="campo" id="mDosesCampo" style="display:none;"><label>Quanto tomar em cada horário</label><div id="mDosesLista"></div></div>
     <div class="campo"><label>Observação</label><input type="text" id="mObs" placeholder="Ex: tomar com alimento..."></div>
     <button class="btn-verde" onclick="salvarRemedio()">💾 Salvar Remédio</button>
@@ -1231,6 +1231,11 @@ function renderGrade(prefix) {
     return '<button type="button" class="horario-toggle' + (sel.indexOf(h) !== -1 ? ' sel' : '') + '" data-hora="' + h + '" onclick="' + fn + '(this, this.dataset.hora)">' + h + '</button>';
   }).join('');
 }
+// Ao salvar: se ficou uma hora escolhida no campo sem tocar em "Outro horário", ela entra também
+function incluirHoraLivrePendente(prefix) {
+  const inp = document.getElementById(prefix + 'HoraLivre');
+  if (inp && /^\d{2}:\d{2}/.test(inp.value || '')) adicionarHoraLivre(prefix);
+}
 function adicionarHoraLivre(prefix) {
   const inp = document.getElementById(prefix + 'HoraLivre');
   const v = (inp.value || '').slice(0, 5);
@@ -1356,6 +1361,7 @@ function salvarEdicaoRemedio() {
   var id = parseInt(document.getElementById('erId').value);
   var nome = document.getElementById('erNome').value.trim();
   if (!nome) { alert('Digite o nome!'); return; }
+  incluirHoraLivrePendente('er');
   if (!horasSelEd2.length) { alert('Selecione pelo menos um horario!'); return; }
   var idx2 = remedios.findIndex(function(x) { return x.id === id; });
   if (idx2 !== -1) {
@@ -1383,6 +1389,7 @@ function toggleHorario(btn, h) {
 function salvarRemedio() {
   const nome = document.getElementById('mNome').value.trim();
   if (!nome) { alert('Digite o nome do remédio!'); return; }
+  incluirHoraLivrePendente('m');
   if (!horasSel.length) { alert('Escolha pelo menos um período ou horário!'); return; }
   horasSel.sort();
   remedios.push({id:Date.now(), nome, dose:document.getElementById('mDose').value.trim(), horarios:horasSel.slice(), doses:coletarDoses('m', horasSel), periodo:periodoDoHorario(horasSel[0]), obs:document.getElementById('mObs').value.trim()});
@@ -1586,6 +1593,7 @@ function salvarRemPaciente() {
   const id = pacienteAtualId;
   const nome = document.getElementById('mNome').value.trim();
   if (!nome) { alert('Digite o nome do remédio!'); return; }
+  incluirHoraLivrePendente('m');
   if (!horasSel.length) { alert('Escolha pelo menos um período ou horário!'); return; }
   horasSel.sort();
   const remPac = JSON.parse(localStorage.getItem('pv_remedios_pac_' + id) || '[]');
@@ -3068,7 +3076,7 @@ setTimeout(function() {
     <input type="hidden" id="erId">
     <div class="campo"><label>Nome do remédio *</label><input type="text" id="erNome" placeholder="Ex: Metformina 500mg"></div>
     <div class="campo"><label>Quantidade padrão</label><input type="text" id="erDose" placeholder="Ex: 1 comprimido" oninput="renderDosesForm('er')"></div>
-    <div class="campo"><label>Horários</label><div class="horarios-grid" id="erHorariosGrid"></div><div class="hora-livre"><input type="time" id="erHoraLivre"><button type="button" onclick="adicionarHoraLivre('er')">➕ Outro horário</button></div></div>
+    <div class="campo"><label>Horários</label><div class="horarios-grid" id="erHorariosGrid"></div><div class="hora-livre"><input type="time" id="erHoraLivre" onchange="if(this.value)adicionarHoraLivre('er')"><button type="button" onclick="adicionarHoraLivre('er')">➕ Outro horário</button></div></div>
     <div class="campo" id="erDosesCampo" style="display:none;"><label>Quanto tomar em cada horário</label><div id="erDosesLista"></div></div>
     <div class="campo"><label>Observação</label><input type="text" id="erObs" placeholder="Ex: tomar com alimento..."></div>
     <button class="btn-verde" onclick="salvarEdicaoRemedio()">💾 Salvar Alterações</button>
