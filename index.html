@@ -2423,10 +2423,10 @@ function mostrarStatusPush(txt, ok) {
   el.style.background = ok ? '#e8f5ee' : '#fff3e8'; el.style.color = ok ? '#1a7a4a' : '#c2410c';
   if (bt) bt.style.display = ok ? 'block' : 'none';
 }
-var _pushEmAndamento = null;
+var _pushEmAndamento = null, _pushDeNovo = false;
 async function sincronizarPush(forcar) {
   if (!pushSuportado() || Notification.permission !== 'granted') { mostrarStatusPush('', false); return 'sem'; }
-  if (_pushEmAndamento) return _pushEmAndamento;
+  if (_pushEmAndamento) { _pushDeNovo = true; return _pushEmAndamento; }
   _pushEmAndamento = (async function() {
     try {
       var reg = swReg || await navigator.serviceWorker.ready;
@@ -2441,7 +2441,8 @@ async function sincronizarPush(forcar) {
         mostrarStatusPush('📲 Aviso com o app fechado: ativado (' + horarios.length + ' horário' + (horarios.length === 1 ? '' : 's') + ').', true);
         return 'ok';
       }
-      var r = await fetch(PUSH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      // keepalive: o envio termina mesmo se a pessoa fechar o app logo depois de salvar o remédio
+      var r = await fetch(PUSH_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
         body: JSON.stringify({ acao: 'registrar', dispositivo: idDispositivo(), assinatura: assinatura, horarios: horarios, fuso: fuso }) });
       if (!r.ok) throw new Error('servidor ' + r.status);
       localStorage.setItem('pv_push_marca', marca); localStorage.setItem('pv_push_quando', String(Date.now()));
@@ -2451,7 +2452,10 @@ async function sincronizarPush(forcar) {
       console.warn('push', e);
       mostrarStatusPush('⚠️ Não consegui ativar o aviso com o app fechado agora. Ele tenta de novo quando você abrir o app com internet.', false);
       return 'erro';
-    } finally { _pushEmAndamento = null; }
+    } finally {
+      _pushEmAndamento = null;
+      if (_pushDeNovo) { _pushDeNovo = false; setTimeout(function() { sincronizarPush(false); }, 50); }
+    }
   })();
   return _pushEmAndamento;
 }
@@ -2471,7 +2475,7 @@ async function testarAvisoFechado() {
   Storage.prototype.setItem = function(k, v) {
     original.apply(this, arguments);
     if (this === window.localStorage && /^pv_remedios/.test(String(k))) {
-      clearTimeout(espera); espera = setTimeout(function() { sincronizarPush(false); }, 2500);
+      clearTimeout(espera); espera = setTimeout(function() { sincronizarPush(false); }, 600);
     }
   };
 })();
