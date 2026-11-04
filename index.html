@@ -616,7 +616,7 @@ body.dark-mode .ia-chat .msg.ia .msg-bubble { background:#374151 !important; col
     <div style="font-size:14px;line-height:1.6;color:var(--texto);">
       <p><strong>Onde ficam seus dados?</strong><br>Remédios, consultas, pessoas e contatos ficam guardados <strong>só neste aparelho</strong>. O PREVITA não tem cadastro, login nem banco de dados com suas informações.</p>
       <p style="margin-top:10px;"><strong>O que sai do aparelho?</strong><br>Só quando você usa a <strong>leitura de receita por IA</strong> ou a <strong>pesquisa online do PREV</strong>: o texto da receita ou da pergunta é enviado para processamento por inteligência artificial (servidores Supabase, Cloudflare e Groq, que podem ficar fora do Brasil). Com as notificações ativadas, o servidor também guarda <strong>só os horários</strong> dos remédios (ex.: 08:00) e o endereço de entrega das notificações deste celular, para avisar com o app fechado. O nome do remédio e a doença não são enviados. Para parar, desative as notificações do PREVITA nas configurações do celular. Seu nome e seu perfil não são enviados. Antes do primeiro uso, o app pede sua permissão.</p>
-      <p style="margin-top:10px;"><strong>Contador de acessos</strong><br>O app conta quantas vezes foi aberto, sem identificar quem abriu.</p>
+      <p style="margin-top:10px;"><strong>Contador de acessos</strong><br>O app conta quantos aparelhos já usaram o PREVITA, cada um uma vez só, sem identificar quem é.</p>
       <p style="margin-top:10px;"><strong>Seus direitos (LGPD – Lei 13.709/2018)</strong><br>Você pode apagar tudo a qualquer momento no botão abaixo. Dúvidas: <a href="mailto:previta@fosterconstrucoes.com.br" style="color:var(--verde);font-weight:800;">previta@fosterconstrucoes.com.br</a></p>
       <p style="margin-top:10px;font-size:12px;color:var(--cinza-texto);">O PREVITA ajuda a organizar remédios e consultas. Ele não substitui a orientação do médico, do enfermeiro ou do farmacêutico.</p>
     </div>
@@ -2588,29 +2588,41 @@ function mostrarToast(msg) {
   t.style.cssText = 'position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:#1a1e2b;color:white;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;font-family:Nunito,sans-serif;z-index:8000;box-shadow:0 4px 16px rgba(0,0,0,0.3);white-space:nowrap;';
   t.textContent = msg; document.body.appendChild(t); setTimeout(function() { t.remove(); }, 3000);
 }
+// Contador de usuários: cada aparelho conta uma vez só (abrir de novo ou entrar logado não soma).
+// O total antigo do contador de acessos fica guardado como base e não muda.
+const CONTADOR_RPC = 'https://fvsdlpnvqfvjdxmfgbjx.supabase.co/rest/v1/rpc/';
+const CONTADOR_KEY = 'sb_publishable_VT3XEbInyTr2Eu-AuLnrqw_BOrA2jYy';
+function mostrarContador(total) {
+  const hdr = document.getElementById('contadorHeader');
+  if (hdr && total) hdr.textContent = '👥 ' + parseInt(total).toLocaleString('pt-BR');
+}
+function contadorRpc(fn, corpo) {
+  return fetch(CONTADOR_RPC + fn, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: CONTADOR_KEY, Authorization: 'Bearer ' + CONTADOR_KEY }, body: JSON.stringify(corpo) })
+    .then(function(r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
+}
+function novoId() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+}
 function registrarAcesso() {
   try {
-    let local = parseInt(localStorage.getItem('pv_acessos_total') || '0') + 1;
-    localStorage.setItem('pv_acessos_total', local);
-    fetch(WORKER_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ modo: 'contador', pergunta: '' })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-
-      // Atualizar contador no header
-      const hdr = document.getElementById('contadorHeader');
-      if (hdr && data.total) {
-        hdr.textContent = '👥 ' + parseInt(data.total).toLocaleString('pt-BR');
-      }
-    })
-    .catch(function() {
-
-      const hdr = document.getElementById('contadorHeader');
-      if (hdr) hdr.textContent = '👥 ' + local.toLocaleString('pt-BR');
-    });
+    let id = localStorage.getItem('pv_contador_id');
+    // aparelho novo = nunca tinha aberto o app (quem já abria está dentro do total antigo)
+    const novo = !id && !localStorage.getItem('pv_acessos_total');
+    if (!id) { id = novoId(); localStorage.setItem('pv_contador_id', id); }
+    if (!localStorage.getItem('pv_acessos_total')) localStorage.setItem('pv_acessos_total', '1');
+    const guardado = localStorage.getItem('pv_total_usuarios');
+    if (guardado) mostrarContador(guardado);
+    contadorRpc('previta_contar', { p_id: id, p_novo: novo })
+      .then(function(d) {
+        if (d.base_definida) return d;
+        // primeira vez no sistema novo: pega o total antigo uma única vez e guarda como base
+        return fetch(WORKER_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ modo: 'contador', pergunta: '' }) })
+          .then(function(r) { return r.json(); })
+          .then(function(w) { return contadorRpc('previta_definir_base', { p_total: parseInt(w.total) || 0 }); });
+      })
+      .then(function(d) { if (d && d.total) { localStorage.setItem('pv_total_usuarios', d.total); mostrarContador(d.total); } })
+      .catch(function() {});
   } catch(e) {}
 }
 document.addEventListener('touchstart', function() { getAudioCtx(); }, {once:true});
@@ -2782,7 +2794,7 @@ function chavesDeDados() {
   const ks = [];
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i);
-    if (k && k.indexOf('pv_') === 0 && k.indexOf('pv_alertas_') !== 0 && k !== 'pv_acessos_total') ks.push(k);
+    if (k && k.indexOf('pv_') === 0 && k.indexOf('pv_alertas_') !== 0 && k !== 'pv_acessos_total' && k !== 'pv_contador_id' && k !== 'pv_total_usuarios') ks.push(k);
   }
   return ks;
 }
